@@ -1,10 +1,12 @@
 import numpy as np
-def LifeGame(mat):
+def LifeGame2(mat):
     [m,n]=mat.shape
     mat_next=np.zeros([m,n])
     mat_expand=np.zeros([m+2,n+2])
+    mat_expand[0]=np.concatenate((np.array([0]),mat[-1],np.array([0])))
+    mat_expand[-1]=np.concatenate((np.array([0]),mat[0],np.array([0])))
     for j in range(m):
-        mat_expand[j+1]=np.concatenate((np.array([0]),mat[j],np.array([0])))
+        mat_expand[j+1]=np.concatenate((np.array([mat[j][-1]]),mat[j],np.array([mat[j][0]])))
         pass
     for j in range(m):
         for i in range(n):
@@ -42,5 +44,5 @@ for i in range(Final):
     plt.imshow(init)
     plt.pause(0.1)
     plt.cla()
-    init=LifeGame(init)
+    init=LifeGame2(init)
     pass
