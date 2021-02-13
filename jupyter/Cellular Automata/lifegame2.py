@@ -3,8 +3,8 @@ def LifeGame2(mat):
     [m,n]=mat.shape
     mat_next=np.zeros([m,n])
     mat_expand=np.zeros([m+2,n+2])
-    mat_expand[0]=np.concatenate((np.array([0]),mat[-1],np.array([0])))
-    mat_expand[-1]=np.concatenate((np.array([0]),mat[0],np.array([0])))
+    mat_expand[0]=np.concatenate((np.array([mat[-1][-1]]),mat[-1],np.array([mat[-1][0]])))
+    mat_expand[-1]=np.concatenate((np.array([mat[0][-1]]),mat[0],np.array([mat[0][0]])))
     for j in range(m):
         mat_expand[j+1]=np.concatenate((np.array([mat[j][-1]]),mat[j],np.array([mat[j][0]])))
         pass
@@ -30,7 +30,6 @@ def LifeGame2(mat):
 
 import random as rd
 import matplotlib.pyplot as plt
-import time as t
 init=np.zeros([100,100])
 [m,n]=init.shape
 for j in range(m):
