@@ -27,4 +27,4 @@ int main(){
     }
     printf("%llu\n", f[bx][by]);
     return 0;
-} 
+}
