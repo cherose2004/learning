@@ -10,7 +10,7 @@ def RK4_iter(x,y,f,h=0.01):
     return next x and y
     '''
     k1=f(x,y)
-    k2=f(x+h/2,y+k1/2*h)
+    k2=f(x+h/2,y+k1*h/2)
     k3=f(x+h/2,y+k2*h/2)
     k4=f(x+h,y+k3*h)
     x_next=x+h
