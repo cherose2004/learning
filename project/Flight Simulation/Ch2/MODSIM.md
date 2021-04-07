@@ -42,7 +42,7 @@ ms.plot(frame.u)
 ms.decorate(xlabel='',ylabel='')
 ```
 
-##6.get_last_value(frame.u)/get_first_value(frame.u)
+## 6.get_last_value(frame.u)/get_first_value(frame.u)
 
 获得仿真末/初时刻的值
 
@@ -64,3 +64,12 @@ res.root
 ## 8.SweepSeries()
 混合扫描序列？
 总之是初始化一个TimeFrame()类似的时间序列
+
+## 9.UNITS模块
+这个模块是用来给定单位的。用法大概如下吧：
+```python
+m=ms.UNITS.meter #长度米
+s=ms.UNITS.second #时间秒
+g=9.8*m/s**2 #设置重力加速度值
+```
+我疑心这是用sympy符号计算库实现的，但是没有证据。总之这个库得装上用于符号计算，客观的说这个库没有mathematica强大。
