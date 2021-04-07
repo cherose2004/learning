@@ -42,9 +42,9 @@ ms.plot(frame.u)
 ms.decorate(xlabel='',ylabel='')
 ```
 
-##6.get_last_value(frame.u)
+##6.get_last_value(frame.u)/get_first_value(frame.u)
 
-获得仿真末时刻的值
+获得仿真末/初时刻的值
 
 ```python
 u_final=get_last_value(frame.u)
@@ -63,3 +63,4 @@ res.root
 
 ## 8.SweepSeries()
 混合扫描序列？
+总之是初始化一个TimeFrame()类似的时间序列
