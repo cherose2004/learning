@@ -8,7 +8,7 @@ vector<T> RK4_iter(T xi,T yi,T(*f)(T x,T y),T2 h=0.01){
     T k3=f(xi+h/2,yi+k2*h/2);
     T k4=f(xi+h,yi+k3*h);
     T xi_next=xi+h;
-    T yi_next=yi+(k1+2*k2+2*k3+k4)*h/2;
+    T yi_next=yi+(k1+2*k2+2*k3+k4)*h/6;
     vector<T> next={xi_next,yi_next};
     return next;
 }
