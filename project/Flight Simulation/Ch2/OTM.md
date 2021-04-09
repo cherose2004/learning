@@ -35,8 +35,8 @@ $$
 
 其中初始值：
 $$
-V_x(0)=V_0 \cos(\theta)\\
-V_y(0)=V_0 \sin(\theta)\tag{4}
+V_x(0)=V_0 \cos\theta\\
+V_y(0)=V_0 \sin\theta\tag{4}
 $$
 
 为此编写了一个对象OTM(Oblicque-Throw-Motion)用以仿真此过程，支持自定义初速度、角度、仿真时间以及仿真步长，并最终将仿真的斜抛曲线绘制出来,并且可视化各个参数。其各个函数定义如下：
