@@ -81,9 +81,9 @@ k_1=f(x_i,y_i,y'_i)\\
 
 k_2=f(x_i+\frac{h}{2},y_i+y'_i\cdot\frac{h}{2},y'_i+k_1\cdot\frac{h}{2})\\
 
-k_3=f(x_i+\frac{h}{2},y_i+y'_i\cdot\frac{h}{2}+k_1\cdot\frac{h^2}{4},y_i+k_2\cdot\frac{h}{2})\\
+k_3=f(x_i+\frac{h}{2},y_i+y'_i\cdot\frac{h}{2}+k_1\cdot\frac{h^2}{4},y'_i+k_2\cdot\frac{h}{2})\\
 
-k_4=f(x_i+h,y_i+y'_i\cdot\frac{h}{2}+k_2\cdot\frac{h^2}{2},y'_i+k_3\cdot h)
+k_4=f(x_i+h,y_i+y'_i \cdot h+k_2\cdot\frac{h^2}{2},y'_i+k_3\cdot h)
 
 \end{cases}\\
 
@@ -91,12 +91,12 @@ k_4=f(x_i+h,y_i+y'_i\cdot\frac{h}{2}+k_2\cdot\frac{h^2}{2},y'_i+k_3\cdot h)
 &\begin{cases}
 x_{i+1}=x_i+h\\
 y_{i+1}=y_i+h\cdot y_{i+1}+\frac{h^2}{6}\cdot(k_1+k_2+k_3)\\
-y'_{i+1}=y_i+\frac{h}{6}\cdot(k_1+2k_2+2k_3+k_4)
+y'_{i+1}=y'_i+\frac{h}{6}\cdot(k_1+2k_2+2k_3+k_4)
 \end{cases}
 \end{aligned}
 $$
 
-为了实现这个迭代步骤，我定义了**RK4_iter_2(x,y,y1,f,h=0.01)**函数，其中,x表示当前的x值，y表示当前的y值，y1表示当前的y的一阶导数值，f表示$y'=f(x,y)$中的f函数，步长有默认值0.01。
+为了实现这个迭代步骤，我定义了**RK4_iter_2(x,y,y1,f,h=0.01)** 函数，其中,x表示当前的x值，y表示当前的y值，y1表示当前的y的一阶导数值，f表示$y'=f(x,y)$中的f函数，步长有默认值0.01。
 
 返回值为下一步的x，y和y1，其函数展示如下：
 ```python
