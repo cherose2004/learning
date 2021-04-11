@@ -1,3 +1,3 @@
 function value=myplus(a,b)
-value=a++4;
+value=a+b+4;
 end
