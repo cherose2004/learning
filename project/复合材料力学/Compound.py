@@ -73,7 +73,7 @@ class layer:    #定义层类
             [S12,S22,0],
             [0,0,S66]
         ])
-        self.Q=np.linalg.inv(self).S
+        self.Q=np.linalg.inv(self.S)
         self.__get_basic()
         self.set_angle(0)
         pass
