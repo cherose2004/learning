@@ -2,27 +2,27 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 
-L,l = 30,12  # m
-R,r = 3,0.5  # m
-d = 0.1  # step m
-M,N = int(L/d),int(2*R/d)
-m,n=int(l/d),int(2*r/d)
-Vtotal = l*np.pi*r**2
-S = 2*np.pi*r*l+2*np.pi*r**2
-k,c,rho = 0.6,4200,1000  
-K = k/c/rho
-v = 1
-dt = 10
-h = 44.45e-3
-b = 482.6e-3
-a = 525e-3
-V0 = a*b*h
-Q = 500
-q = Q/(h*b*a)
-qs0 = q/c/rho
-Number = math.floor(Vtotal/V0)
-qs = Number*V0/S/d * qs0
-T0 = 273.15
+L,l = 30,12  # 图的大长，小长
+R,r = 3,0.5  # 图的大径，小径
+d = 0.1  # 分度长度
+M,N = int(L/d),int(2*R/d) #横纵切块书
+m,n=int(l/d),int(2*r/d) #横纵切块
+Vtotal = l*np.pi*r**2 #总体积
+S = 2*np.pi*r*l+2*np.pi*r**2 #总面积
+k,c,rho = 0.6,4200,1000  #水传热系数，比热，密度
+K = k/c/rho #折合传热系数
+v = 1 #洋流速度
+dt = 100 #仿真时序步长
+h = 44.45e-3 #高
+b = 482.6e-3#宽
+a = 525e-3 #长
+V0 = a*b*h #小体积
+Q = 500 #发热量
+q = Q/(h*b*a) #单位体积发热量
+qs0 = q/c/rho #折合发热量
+Number = math.floor(Vtotal/V0) #小盒子数量
+qs = Number*V0/S/d * qs0 #总折合发热量
+T0 = 273.15 #绝对零度
 
 def edge(j,i):
     j+=1
