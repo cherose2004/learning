@@ -8,7 +8,7 @@ R,r = 1.5,0.5  # 图的大径，小径
 d = 0.1  # 分度长度
 M,N = int(L/d),int(2*R/d) #横纵切块数
 m,n=int(l/d),int(2*r/d) #横纵切块
-dt = 10 #仿真时序步长
+dt = 100 #仿真时序步长
 tfinal=600
 step=int(tfinal/dt)
 
@@ -55,7 +55,7 @@ def next_ji(j,i,Tnow):
     Tji3 = Tnow[j][i-1]
     Tji4 = Tnow[j][i+1]
     T22=(Tji1+Tji2+Tji3+Tji4-4*Tji)/d**2
-    Tz_ = (Tji2-Tji1)/2/d
+    Tz_ = np.abs((Tji2-Tji1)/2/d)
     rho_a=rhoa*T0/Tji
     Ka=ka/ca/rho_a
     if edge(j,i) =='in':
