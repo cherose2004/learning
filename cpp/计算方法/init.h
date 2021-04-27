@@ -1,4 +1,5 @@
 #include<iostream>
+
 double*zeros1(int n){
     double*p;
     p=new double[n]();
@@ -70,14 +71,49 @@ double***zeros3(int l,int m,int n){
     return p;
 }
 
-double***ones3(int m,int n,int l,double value=1.){
-    double***p=zeros3(m,n,l);
-    for(int i=0;i<m;i++){
-        for(int j=0;j<n;j++){
-            for(int k=0;k<l;k++){
+double***ones3(int l,int m,int n,double value=1.){
+    double***p=zeros3(l,m,n);
+    for(int i=0;i<l;i++){
+        for(int j=0;j<m;j++){
+            for(int k=0;k<n;k++){
                 p[i][j][k]=value;
             }
         }
     }
     return p;
 }
+
+class matrix{
+    public:
+        int m;
+        int n;
+        double**p;
+        
+        //构造函数
+        matrix(int m=1,int n=1,double value=0.){
+            this->p=ones2(m,n,value);
+            this->m=m;
+            this->n=n;
+        }
+
+        //析构函数
+        ~matrix(){
+            delete []p;
+        };
+
+        //矩阵显示
+        void show(){
+            MatShow(p,m,n);
+        }
+
+        //Transpose转置
+        matrix Transpose(){
+            matrix matT=matrix(this->n,this->m);
+            for(int j=0;j<this->m;j++){
+                for(int i=0;i<this->n;i++){
+                    matT.p[i][j]=this->p[j][i];
+                }
+            }
+            return matT;
+        }
+};
