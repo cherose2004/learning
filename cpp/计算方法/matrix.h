@@ -69,6 +69,12 @@ class matrix{
 
         //矩阵显示
         void show();
+
+        //点积
+        matrix dot(matrix mat2);
+
+        //判断是否为方阵
+        bool isSquare(){if(m==n)return 1;else return 0;}
 };
 
 //转置
@@ -207,7 +213,7 @@ matrix matrix::operator-(const matrix& mat2){
         return Mat;
     }
     else{
-        std::cout<<"dimensions error when use '+' "<<std::endl;
+        std::cout<<"dimensions error when use '-' "<<std::endl;
         matrix Mat=matrix(mat2.m,mat2.n);
         return Mat;
     }
@@ -281,7 +287,7 @@ matrix matrix::operator*(const matrix& mat2){
         return Mat;
     }
     else{
-        std::cout<<"dimensions error when use '+' "<<std::endl;
+        std::cout<<"dimensions error when use '*' "<<std::endl;
         matrix Mat=matrix(mat2.m,mat2.n);
         return Mat;
     }
@@ -347,7 +353,7 @@ matrix matrix::operator/(const matrix& mat2){
         return Mat;
     }
     else{
-        std::cout<<"dimensions error when use '+' "<<std::endl;
+        std::cout<<"dimensions error when use '/' "<<std::endl;
         matrix Mat=matrix(mat2.m,mat2.n);
         return Mat;
     }
@@ -372,6 +378,7 @@ matrix operator/(const double u,matrix mat2){
     return Mat;
 }
 
+//算符重载==
 bool matrix::operator==(const matrix &mat2){
     if(m==mat2.m&&n==mat2.n){
         for(int j=0;j<m;j++){
@@ -383,3 +390,69 @@ bool matrix::operator==(const matrix &mat2){
     }
     else return 0;
 }
+
+
+//点积
+matrix matrix::dot(matrix mat2){
+    if(this->n==mat2.m){
+        matrix Mat(this->m,mat2.n);
+        double sum;
+        for(int j=0;j<this->m;j++){
+            for(int i=0;i<mat2.n;i++){
+                sum=0;
+                for(int k=0;k<this->n;k++){
+                    sum+=this->p[j][k]*mat2.p[k][i];
+                }
+                Mat.p[j][i]=sum;
+            }
+        }
+        return Mat;
+    }
+    else{
+        matrix Mat;
+        std::cout<<"dimensions error when use dot!"<<std::endl;
+        return Mat;
+    }
+}
+
+
+//单位矩阵
+matrix eye(int n){
+    matrix Mat(n,n);
+    for(int j=0;j<n;j++){
+        Mat.p[j][j]=1.;
+    }
+    return Mat;
+}
+
+//方阵
+matrix square(int n,double value=0.){
+    matrix Mat(n,n,value);
+    return Mat;
+}
+
+//一维向量
+matrix linspace(double beg,double en,double d,char layout='c'){
+    int n=int((en-beg)/d);
+    if(layout=='c'){
+        matrix Mat(n,1);
+        for(int j=0;j<n;j++){
+            Mat.p[j][0]=beg+j*d;
+        }
+        return Mat;
+    }
+    else{
+        matrix Mat(1,n);
+        for(int i=0;i<n;i++){
+            Mat.p[0][i]=beg+i*d;
+        }
+        return Mat;
+    }
+}
+
+//一维向量另一种定义方式
+matrix arange(double beg,double en,int n,char layout='c'){
+    double d=(en-beg)/double(n);
+    return linspace(beg,en,d,layout);
+}
+
