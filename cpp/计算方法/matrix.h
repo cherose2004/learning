@@ -81,6 +81,15 @@ class matrix{
        //add添加函数
        int add(double u,char layout);
        int add(matrix mat2,char layout);
+       
+       //cut得到一个子矩阵
+       matrix cut(int j1,int j2,int i1,int i2);
+
+       //除去j行i列后的矩阵del
+       matrix del(int j1,int i1);
+
+       //det行列式值
+       double det();
 };
 
 //转置
@@ -512,6 +521,86 @@ int matrix::add(matrix mat2,char layout='c'){
 }
 
 
+//cut得到子矩阵
+matrix matrix::cut(int j1=0,int j2=0,int i1=0,int i2=0){
+    matrix Mat(j2-j1+1,i2-i1+1);
+    for(int j=0;j<Mat.m;j++){
+        for(int i=0;i<Mat.n;i++){
+            Mat.p[j][i]=this->p[j1+j][i1+i];
+        }
+    }
+    return Mat;
+}
+
+//del删去j行i列后的matrix
+matrix matrix::del(int j1,int i1){
+    if(j1==0&&i1==0)return this->cut(1,m-1,1,n-1);
+    else if(j1==0&&i1==n-1)return this->cut(1,m-1,0,n-2);
+    else if(j1==m-1&&i1==0)return this->cut(0,m-2,1,n-1);
+    else if(j1==m-1&&i1==m-1)return this->cut(0,m-2,0,n-2);
+    else if(j1==0){
+        matrix matl=this->cut(1,m-1,0,i1-1);
+        matrix matr=this->cut(1,m-1,i1+1,n-1);
+        matrix Mat=matl.add(matr,'r');
+        return Mat;
+    }
+    else if(j1==m-1){
+        matrix matl=this->cut(0,m-2,0,i1-1);
+        matrix matr=this->cut(0,m-2,i1+1,n-1);
+        matrix Mat=matl.add(matr,'r');
+        return Mat;
+    }
+    else if(i1==0){
+        matrix matu=this->cut(0,j1-1,1,n-1);
+        matrix matd=this->cut(j1+1,m-1,1,n-1);
+        matrix Mat=matu.add(matd);
+        return Mat;
+    }
+    else if(i1==n-1){
+        matrix matu=this->cut(0,j1-1,0,n-2);
+        matrix matd=this->cut(j1+1,m-1,0,n-2);
+        matrix Mat=matu.add(matd);
+        return Mat;
+    }
+    else{
+        matrix mat1=this->cut(0,j1-1,0,i1-1);
+        matrix mat2=this->cut(0,j1-1,i1+1,n-1);
+        matrix mat3=this->cut(j1+1,m-1,0,i1-1);
+        matrix mat4=this->cut(j1+1,m-1,i1+1,n-1);
+        mat1.add(mat3);
+        mat2.add(mat4);
+        mat1.add(mat2,'r');
+        return mat1;
+    }
+}
+
+
+//det()行列式值
+double matrix::det(){
+    if(!this->isSquare()){
+        std::cout<<"is not a square when use det!"<<std::endl;
+        return 0;
+    }
+    else{
+        if(m==1){return this->p[0][0];}
+        else if(m==2){
+            double a=this->p[0][0];
+            double b=this->p[0][1];
+            double c=this->p[1][0];
+            double d=this->p[1][1];
+            return a*d-b*c;
+        }
+        else{
+            return 0;
+        }
+    }
+}
+
+
+
+
+
+
 //单位矩阵
 matrix eye(int n){
     matrix Mat(n,n);
@@ -551,3 +640,4 @@ matrix arange(double beg,double en,int n,char layout='c'){
     double d=(en-beg)/double(n);
     return linspace(beg,en,d,layout);
 }
+
