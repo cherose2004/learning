@@ -1,5 +1,6 @@
 #include<iostream>
 #include<iomanip>
+#include<cmath>
 
 class matrix{
     private:
@@ -9,13 +10,22 @@ class matrix{
             for(int j=0;j<m;j++){
                 p[j]=new double[n]();
             }
-            for(int j=0;j<m;j++){
-                for(int i=0;i<n;i++){
-                    p[j][i]=value;
+            if(value==0.)return p;
+            else{
+                for(int j=0;j<m;j++){
+                    for(int i=0;i<n;i++){
+                        p[j][i]=value;
+                    }
                 }
+                return p;
             }
-            return p;
-            };
+        }
+
+        double pn(int j,int i){
+            if((j+i)%2==0)return 1;
+            else return -1;
+        }
+
     public:
         int m;
         int n;
@@ -63,6 +73,11 @@ class matrix{
         bool operator==(const matrix &mat2);
         bool operator!=(const matrix &mat2){return !(*this==mat2);}
 
+        matrix operator^(const double u);
+        friend matrix operator^(const double u,matrix mat2);
+
+        void operator=(const matrix &mat2);
+
         //Transpose转置
         matrix Transpose();
 
@@ -90,6 +105,24 @@ class matrix{
 
        //det行列式值
        double det();
+
+       //A伴随矩阵
+       matrix A();
+
+       //inv逆矩阵
+       matrix inv();
+
+       //max(),取最大值
+       matrix max(char layout);
+       //min(),取最小值
+       matrix min(char layout);
+
+       //sum，求和函数
+       matrix sum(char layout);
+       //prod,求积函数
+       matrix prod(char layout);
+       //mean均值函数
+       matrix mean(char layout);
 };
 
 //转置
@@ -408,6 +441,29 @@ bool matrix::operator==(const matrix &mat2){
     else return 0;
 }
 
+//算符重载^
+matrix matrix::operator^(const double u){
+    matrix Mat(m,n);
+    for(int j=0;j<m;j++){
+        for(int i=0;i<n;i++){
+            Mat.p[j][i]=pow(p[j][i],u);
+        }
+    }
+    return Mat;
+}
+
+matrix operator^(const double u,matrix mat2){
+    matrix Mat(mat2.m,mat2.n);
+    for(int j=0;j<mat2.m;j++){
+        for(int i=0;i<mat2.n;i++){
+            Mat.p[j][i]=pow(u,mat2.p[j][i]);
+        }
+    }
+    return Mat;
+}
+
+//=
+void matrix::operator=(const matrix &mat2){*this=mat2;}
 
 //点积
 matrix matrix::dot(matrix mat2){
@@ -537,30 +593,30 @@ matrix matrix::del(int j1,int i1){
     if(j1==0&&i1==0)return this->cut(1,m-1,1,n-1);
     else if(j1==0&&i1==n-1)return this->cut(1,m-1,0,n-2);
     else if(j1==m-1&&i1==0)return this->cut(0,m-2,1,n-1);
-    else if(j1==m-1&&i1==m-1)return this->cut(0,m-2,0,n-2);
-    else if(j1==0){
-        matrix matl=this->cut(1,m-1,0,i1-1);
-        matrix matr=this->cut(1,m-1,i1+1,n-1);
-        matrix Mat=matl.add(matr,'r');
-        return Mat;
+    else if(j1==m-1&&i1==n-1)return this->cut(0,m-2,0,n-2);
+    else if(j1==0&&i1!=0&&i1!=n-1){
+        matrix mat1=this->cut(1,m-1,0,i1-1);
+        matrix mat2=this->cut(1,m-1,i1+1,n-1);
+        mat1.add(mat2,'r');
+        return mat1;
     }
-    else if(j1==m-1){
-        matrix matl=this->cut(0,m-2,0,i1-1);
-        matrix matr=this->cut(0,m-2,i1+1,n-1);
-        matrix Mat=matl.add(matr,'r');
-        return Mat;
+    else if(j1==m-1&&i1!=0&&i1!=n-1){
+        matrix mat1=this->cut(0,m-2,0,i1-1);
+        matrix mat2=this->cut(0,m-2,i1+1,n-1);
+        mat1.add(mat2,'r');
+        return mat1;
     }
-    else if(i1==0){
-        matrix matu=this->cut(0,j1-1,1,n-1);
-        matrix matd=this->cut(j1+1,m-1,1,n-1);
-        matrix Mat=matu.add(matd);
-        return Mat;
+    else if(i1==0&&j1!=0&&j1!=m-1){
+        matrix mat1=this->cut(0,j1-1,1,n-1);
+        matrix mat2=this->cut(j1+1,m-1,1,n-1);
+        mat1.add(mat2);
+        return mat1;
     }
-    else if(i1==n-1){
-        matrix matu=this->cut(0,j1-1,0,n-2);
-        matrix matd=this->cut(j1+1,m-1,0,n-2);
-        matrix Mat=matu.add(matd);
-        return Mat;
+    else if(i1==n-1&&j1!=0&&j1!=m-1){
+        matrix mat1=this->cut(0,j1-1,0,n-2);
+        matrix mat2=this->cut(j1+1,m-1,0,n-2);
+        mat1.add(mat2);
+        return mat1;
     }
     else{
         matrix mat1=this->cut(0,j1-1,0,i1-1);
@@ -577,7 +633,7 @@ matrix matrix::del(int j1,int i1){
 
 //det()行列式值
 double matrix::det(){
-    if(!this->isSquare()){
+    if(this->isSquare()==0){
         std::cout<<"is not a square when use det!"<<std::endl;
         return 0;
     }
@@ -591,10 +647,175 @@ double matrix::det(){
             return a*d-b*c;
         }
         else{
-            return 0;
+            double sum=0;
+            for(int k=0;k<n;k++){
+                sum+=pn(0,k)*(this->del(0,k)).det()*(this->p[0][k]);
+            }
+            return sum;
         }
     }
 }
+
+
+//A伴随矩阵
+matrix matrix::A(){
+    matrix Mat(m,n);
+    if(!this->isSquare()){
+        std::cout<<"is not a square when use A()"<<std::endl;
+        return Mat;
+    }
+    else{
+        matrix mat=this->Transpose();
+        for(int j=0;j<m;j++){
+            for(int i=0;i<n;i++){
+                Mat.p[j][i]=pn(j,i)*(mat.del(j,i)).det();
+            }
+        }
+        return Mat;
+    }
+}
+
+//inv逆矩阵
+matrix matrix::inv(){
+    double u=this->det();
+    matrix Mat=this->A();
+    return Mat/u;
+}
+
+
+
+//max(),按列取最大值
+matrix matrix::max(char layout='c'){
+    if(layout=='c'){
+        matrix Mat(1,n);
+        double Max;
+        for(int i=0;i<n;i++){
+            Max=p[0][i];
+            for(int j=1;j<m;j++){
+                if(p[j][i]>Max)Max=p[j][i];
+                else;
+            }
+            Mat.p[0][i]=Max;
+        }
+        return Mat;
+    }
+    else{
+        matrix Mat(m,1);
+        double Max;
+        for(int j=0;j<m;j++){
+            Max=p[j][0];
+            for(int i=1;i<m;i++){
+                if(p[j][i]>Max)Max=p[j][i];
+                else;
+            }
+            Mat.p[j][0]=Max;
+        }
+        return Mat;
+    }
+}
+
+//min(),取最小值
+matrix matrix::min(char layout='c'){
+    if(layout=='c'){
+        matrix Mat(1,n);
+        double Min;
+        for(int i=0;i<n;i++){
+            Min=p[0][i];
+            for(int j=1;j<m;j++){
+                if(p[j][i]<Min)Min=p[j][i];
+                else;
+            }
+            Mat.p[0][i]=Min;
+        }
+        return Mat;
+    }
+    else{
+        matrix Mat(m,1);
+        double Min;
+        for(int j=0;j<m;j++){
+            Min=p[j][0];
+            for(int i=1;i<m;i++){
+                if(p[j][i]<Min)Min=p[j][i];
+                else;
+            }
+            Mat.p[j][0]=Min;
+        }
+        return Mat;
+    }
+}
+
+
+
+//sum,求和函数
+matrix matrix::sum(char layout='c'){
+    if(layout=='c'){
+        matrix Mat(1,n);
+        double s;
+        for(int i=0;i<n;i++){
+            s=0;
+            for(int j=0;j<m;j++){
+                s+=p[j][i];
+            }
+            Mat.p[0][i]=s;
+        }
+        return Mat;
+    }
+    else{
+        matrix Mat(m,1);
+        double s;
+        for(int j=0;j<m;j++){
+            s=0;
+            for(int i=0;i<n;i++){
+                s+=p[j][i];
+            }
+            Mat.p[j][0]=s;
+        }
+        return Mat;
+    }
+}
+
+//prod求积函数
+matrix matrix::prod(char layout='c'){
+    if(layout=='c'){
+        matrix Mat(1,n);
+        double s;
+        for(int i=0;i<n;i++){
+            s=1;
+            for(int j=0;j<m;j++){
+                s*=p[j][i];
+            }
+            Mat.p[0][i]=s;
+        }
+        return Mat;
+    }
+    else{
+        matrix Mat(m,1);
+        double s;
+        for(int j=0;j<m;j++){
+            s=1;
+            for(int i=0;i<n;i++){
+                s*=p[j][i];
+            }
+            Mat.p[j][0]=s;
+        }
+        return Mat;
+    }
+}
+
+
+//mean均值函数
+matrix matrix::mean(char layout='c'){
+    if(layout=='c'){
+        matrix Mat=this->sum('c')/double(m);
+        return Mat;
+    }
+    else{
+        matrix Mat=this->sum('r')/double(n);
+        return Mat;
+    }
+}
+
+
 
 
 
@@ -641,3 +862,68 @@ matrix arange(double beg,double en,int n,char layout='c'){
     return linspace(beg,en,d,layout);
 }
 
+
+//构造矩阵并返回
+matrix make_mat(double *p,int m,int n){
+    matrix Mat(m,n);
+    for(int j=0;j<m;j++){
+        for(int i=0;i<n;i++){
+            Mat.p[j][i]=*(p+j*n+i);
+        }
+    }
+    return Mat;
+}
+
+
+//取最大值
+double max(matrix mat){
+    matrix mat1=mat.max('r');
+    matrix mat2=mat1.max('c');
+    return mat2.p[0][0];
+}
+
+//取最小值
+double min(matrix mat){
+    matrix mat1=mat.min('r');
+    matrix mat2=mat1.min('c');
+    return mat2.p[0][0];
+}
+
+
+//求和
+double sum(matrix mat){
+    matrix mat1=mat.sum('r');
+    matrix mat2=mat1.sum('c');
+    return mat2.p[0][0];
+}
+
+//求积
+double prod(matrix mat){
+    matrix mat1=mat.prod('r');
+    matrix mat2=mat1.prod('c');
+    return mat2.p[0][0];
+}
+
+
+//求均值
+double mean(matrix mat){
+    return sum(mat)/double(mat.m*mat.n);
+}
+
+
+//乘方
+matrix power(matrix mat,int k){
+    if(mat.isSquare()==0){
+        std::cout<<"dimensions error when use power"<<std::endl;
+        return mat;
+    }
+    else{
+        matrix Mat=eye(mat.m);
+        matrix mat_iter;
+        for(int i=0;i<k;i++){
+            mat_iter=Mat.dot(mat);
+            Mat=mat_iter;
+        }
+        return Mat;
+    }
+}
