@@ -2,6 +2,10 @@
 #include"matrix.h"
 using namespace std;
 
+double f(double x){
+    return x*x;
+}
+
 int main(){
     double a[4][4]={
         {1,1,3,4},
@@ -11,7 +15,8 @@ int main(){
     };
     matrix mat=make_mat((double*)a,4,4);
     mat.show();
-    mat.dot(mat).show();
-    power(mat,2).show();
+    apply(mat,f).show();
+    mat.apply(f);
+    mat.show();
     return 0;
 }

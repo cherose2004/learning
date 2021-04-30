@@ -48,7 +48,7 @@
 
 释放指针p的内存
 
-### 2.5.+-*/重载四则运算符
+### 2.5.+-*/!====^()重载运算符
 
 这里比较难以解释，大概就是支持matrix间的加减乘除，和matrix与double数字的加减乘除，大概分为如下情况：
 
@@ -84,6 +84,11 @@ std::cout<<mat==mat<<std::endl;
 
 还对^进行了重载，需要注意的是是针对每个元素进行的运算，而非所有函数
 
+更新：
+对于()进行重载，mat(j,i)返回mat.p\[j\]\[i\]，可传入负数
+
+对于\[\]进行重载，mat\[k\]按列索引，可传入负数
+
 ### 2.6.matrix Transpose()转置函数
 
 返回当前矩阵的转置矩阵，为一个n\*m的矩阵
@@ -115,7 +120,7 @@ mat.show();
 
 将当前的矩阵打印在控制台上，前后空开一行，间隔为6字符
 
-### 2.7.matrix dot(matrix mat2)点积函数
+### 2.7.1.matrix dot(matrix mat2)点积函数
 
 将当前的matrix乘以mat2，返回一个matrix结果；如果维度对不上将抛出错误
 
@@ -132,6 +137,10 @@ ex:
 2.43e+06 2.43e+06 2.43e+06   2701 
   8103   8103   8103     10 
 ```
+
+### 2.7.2.matrix power(int k)函数
+
+得到矩阵的若干次方，该次方必须为整数，返回该矩阵
 
 ### 2.8.bool isSquare()判断方阵函数
 
@@ -199,7 +208,7 @@ mat.show();
      3      3      3      1      3      3      3      1 
 ```
 
-### 2.11.matrix cut(int j1=0,int j2=0,int i1=0,int i2=0)得到子矩阵函数
+### 2.11.1.matrix cut(int j1=0,int j2=0,int i1=0,int i2=0)得到子矩阵函数
 
 获得从j1~j2,i1~i2前闭后闭的子矩阵，取值分别为0~m-1和0~n-1，即真实索引
 
@@ -232,6 +241,26 @@ ex:
      3      2      1 
      4      4      7 
 ```
+
+### 2.11.2.matrix row(int j)行矩阵
+
+得到矩阵的j行，返回
+
+### 2.11.3.matrix col(int i)列矩阵
+
+得到矩阵的第i列,返回
+
+### 2.11.4.void set_row(int j,matrix mat2)行矩阵赋值
+
+给第j行赋值为mat2
+
+### 2.11.5.void set_col(int i,matrix mat2)列矩阵赋值
+
+给第i列赋值为mat2
+
+### 2.11.6.void set_part(int j0,int i0,matrix mat2)部分赋值
+
+以j0，i0为起点，把mat2覆盖到原矩阵的相应位置
 
 ### 2.12.matrix del(int j1,int i1)
 
@@ -418,6 +447,9 @@ ex:
 按列求取，或者用'r'按行求取均值并返回矩阵，用法同上
 
 
+### 2.19.void apply(double(*f)(double x))映射函数
+
+对每一个元素作用f，并覆盖原矩阵
 
 
 
@@ -590,3 +622,41 @@ ex:
 ### 3.8.double mean()均值函数
 
 返回整个矩阵的均值
+
+
+### 3.9.matrix apply(matrix mat,double(*f)(double x))
+
+对每一个mat里的元素作用f,并返回该矩阵
+
+ex:
+````C++
+    double a[4][4]={
+        {1,1,3,4},
+        {7,1,1,3},
+        {3,2,1,3},
+        {1,1,7,8},
+    };
+    matrix mat=make_mat((double*)a,4,4);
+    mat.show();
+    apply(mat,f).show();
+    mat.apply(f);
+    mat.show();
+```
+
+输出结果:
+```bash
+     1      1      3      4 
+     7      1      1      3 
+     3      2      1      3 
+     1      1      7      8 
+
+     1      1      9     16 
+    49      1      1      9 
+     9      4      1      9 
+     1      1     49     64 
+
+     1      1      9     16 
+    49      1      1      9 
+     9      4      1      9 
+     1      1     49     64 
+```

@@ -78,6 +78,9 @@ class matrix{
 
         void operator=(const matrix &mat2);
 
+        double operator()(const int j,int i);
+        double operator[](const int k);
+
         //Transpose转置
         matrix Transpose();
 
@@ -86,6 +89,8 @@ class matrix{
 
         //点积
         matrix dot(matrix mat2);
+        //次方
+        matrix power(int k);
 
         //判断是否为方阵
         bool isSquare(){if(m==n)return 1;else return 0;}
@@ -99,6 +104,11 @@ class matrix{
        
        //cut得到一个子矩阵
        matrix cut(int j1,int j2,int i1,int i2);
+       matrix row(int j){return this->cut(j,j,0,n-1);};
+       matrix col(int i){return this->cut(0,m-1,i,i);};
+       void set_row(int j,matrix mat2);
+       void set_col(int i,matrix mat2);
+       void set_part(int j0,int i0,matrix mat2);
 
        //除去j行i列后的矩阵del
        matrix del(int j1,int i1);
@@ -123,6 +133,9 @@ class matrix{
        matrix prod(char layout);
        //mean均值函数
        matrix mean(char layout);
+
+       //apply(f)函数应用
+       void apply(double(*f)(double x));
 };
 
 //转置
@@ -463,7 +476,40 @@ matrix operator^(const double u,matrix mat2){
 }
 
 //=
-void matrix::operator=(const matrix &mat2){*this=mat2;}
+void matrix::operator=(const matrix &mat2){
+    this->m=mat2.m;
+    this->n=mat2.n;
+    this->p=zeros2(this->m,this->n);
+    for(int j=0;j<m;j++){
+        for(int i=0;i<n;i++){
+            this->p[j][i]=mat2.p[j][i];
+        }
+    }
+}
+
+
+//()
+double matrix::operator()(const int j,int i=0){
+    int j1=j%m;
+    int i1=i%n;
+    if(j1<0)j1+=m;
+    if(i1<0)i1+=n;
+    return this->p[j1][i1];
+}
+
+//[]
+double matrix::operator[](const int k){
+    int k1;
+    if(k<0){
+        k1=k%(m*n);
+        if(k1<0)k1+=m*n;
+    }
+    else k1=k%(m*n);
+    int j=k1%m;
+    int i=k1/m;
+    return this->p[j][i];
+}
+
 
 //点积
 matrix matrix::dot(matrix mat2){
@@ -488,6 +534,21 @@ matrix matrix::dot(matrix mat2){
     }
 }
 
+matrix eye(int n);
+//次方
+matrix matrix::power(int k){
+    if(!(this->isSquare())){
+        std::cout<<"is not a square when use pow!"<<std::endl;
+        return *this;
+    }
+    else{
+        matrix Mat=eye(m);
+        for(int i=0;i<k;i++){
+            Mat=Mat.dot(*this);
+        }
+        return Mat;
+    }
+}
 
 //reshape重塑函数
 matrix matrix::reshape(int m1,int n1){
@@ -587,6 +648,40 @@ matrix matrix::cut(int j1=0,int j2=0,int i1=0,int i2=0){
     }
     return Mat;
 }
+
+//set_row行赋值
+void matrix::set_row(int j,matrix mat2){
+    if(mat2.m==1&&mat2.n==this->n){
+        for(int i=0;i<this->n;i++){
+            this->p[j][i]=mat2.p[0][i];
+        }
+    }
+    else{
+        std::cout<<"dimensions error when use set_row()"<<std::endl;
+    }
+}
+
+//set_col列赋值
+void matrix::set_col(int i,matrix mat2){
+    if(mat2.n==1&&mat2.m==this->m){
+        for(int j=0;j<m;j++){
+            this->p[j][i]=mat2.p[j][0];
+        }
+    }
+    else{
+        std::cout<<"dimensions error when use set_col()"<<std::endl;
+    }
+}
+
+//set_part()部分赋值
+void matrix::set_part(int j0,int i0,matrix mat2){
+    for(int j=0;j<mat2.m;j++){
+        for(int i=0;i<mat2.n;i++){
+            this->p[j+j0][i+i0]=mat2.p[j][i];
+        }
+    }
+}
+
 
 //del删去j行i列后的matrix
 matrix matrix::del(int j1,int i1){
@@ -816,7 +911,14 @@ matrix matrix::mean(char layout='c'){
 }
 
 
-
+//apply(f)映射函数
+void matrix::apply(double(*f)(double x)){
+    for(int j=0;j<m;j++){
+        for(int i=0;i<n;i++){
+            this->p[j][i]=f(this->p[j][i]);
+        }
+    }
+}
 
 
 
@@ -911,19 +1013,9 @@ double mean(matrix mat){
 }
 
 
-//乘方
-matrix power(matrix mat,int k){
-    if(mat.isSquare()==0){
-        std::cout<<"dimensions error when use power"<<std::endl;
-        return mat;
-    }
-    else{
-        matrix Mat=eye(mat.m);
-        matrix mat_iter;
-        for(int i=0;i<k;i++){
-            mat_iter=Mat.dot(mat);
-            Mat=mat_iter;
-        }
-        return Mat;
-    }
+//作用函数
+matrix apply(matrix mat,double(*f)(double x)){
+    matrix Mat=mat;
+    Mat.apply(f);
+    return Mat;
 }
