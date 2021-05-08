@@ -51,12 +51,12 @@ def get_mean(mat):
     return mean
 
 #均值过滤
-def mean_filter(mat): #均值过滤函数
+def mean_filter(mat,limit=0.33): #均值过滤函数
     mean = get_mean(mat)
     M,N = np.shape(mat)
     for j in range(1,M-1):
         for i in range(1,N-1):
-            if mean[j][i] < 0.34:
+            if mean[j][i] < limit:
                 mean[j][i] = 0
                 pass
             else:
@@ -148,7 +148,7 @@ def dup2(x,y):
 #扫描图像类别
 class OCR:
     
-    def __init__(self,name,up=5):
+    def __init__(self,name,up=5,limit=0.33):
         self.name = name
         self.pic = cv.imread(name)
         self.gray = cv.cvtColor(self.pic,cv.COLOR_BGR2GRAY)
@@ -156,7 +156,8 @@ class OCR:
         self.M,self.N = np.shape(self.mat)
         self.filter0 = get_filter0(self.mat,up)
         self.M0 , self.N0 , self.Sum = get0(self.filter0)
-        self.filter1 = mean_filter(self.filter0)
+        filter1 = mean_filter(self.filter0,limit)
+        self.filter1=mean_filter(filter1,limit)
         self.xiyj = get_xiyj(self.filter1)
         pass
     
