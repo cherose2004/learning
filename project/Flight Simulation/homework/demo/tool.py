@@ -2,6 +2,62 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 
+'''
+插值拟合部分
+'''
+#获得大X矩阵
+def getX(x):
+    n=x.size
+    X=np.zeros([n,n])
+    for i in range(n):
+        X[i]=x**i
+        pass
+    return X.T
+
+#多项式拟合，返回系数数列
+def PnFitted(x,y):
+    n=x.size
+    X=getX(x)
+    A=np.linalg.inv(X).dot(y)
+    return A
+
+#根据已有的x,y插值拟合xin
+def Interpoly(xin,x,y):
+    if xin in x:
+        k=np.argwhere(x==xin)
+        return y[k]
+    elif xin<x[1]:
+        xx=np.array([
+            x[0],x[1],x[2]
+        ])
+        yy=np.array([
+            y[0],y[1],y[2]
+        ])
+        a=PnFitted(xx,yy)
+        return a[0]+a[1]*xin+a[2]*xin**2
+    elif xin>x[-2]:
+        xx=np.array([
+            x[-1],x[-2],x[-3]
+        ])
+        yy=np.array([
+            y[-1],y[-2],y[-3]
+        ])
+        a=PnFitted(xx,yy)
+        return a[0]+a[1]*xin+a[2]*xin**2
+    else:
+        k=0
+        while x[k]<xin:
+            k+=1
+            pass
+        xx=np.array([
+            x[k-1],x[k],x[k+1]
+        ])
+        yy=np.array([
+            y[k-1],y[k],y[k+1]
+        ])
+        a=PnFitted(xx,yy)
+        return a[0]+a[1]*xin+a[2]*xin**2
+
 #人工二值化
 def get_filter0(mat,up=5):
     M,N = np.shape(mat)
