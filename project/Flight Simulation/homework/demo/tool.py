@@ -218,12 +218,13 @@ def CAfilter(mat,M0,N0):
             mat0[j] = CA(mat[j])
             pass
         pass
+    mat0=mat0.T
     for i in range(N):
         if i!= N0:
-            mat0.T[i]= CA(mat.T[i])
+            mat0[i]= CA(mat.T[i])
             pass
         pass
-    return mat0
+    return mat0.T
 
 #排序与去重
 def sort2(x,y):
@@ -267,6 +268,7 @@ def dup2(x,y):
 
 #图象类别
 class Pic:
+
     def __init__(self,name,up=4,limit=0.34):
         self.name = name
         self.pic = cv.imread(name)
@@ -281,6 +283,36 @@ class Pic:
         self.filter2 = CAfilter(self.filter1,self.M0,self.N0)
         self.xiyj = get_xiyj(self.filter2)
         pass
+
+    def set_p1(self,x1,y1):
+        self.x1 = x1
+        self.y1 = y1
+        self.i1 = self.N0
+        self.j1 = self.M0
+        pass
+    
+    def set_p2(self,x2,y2,j2,i2):
+        self.x2 = x2
+        self.y2 = y2
+        self.j2 = j2
+        self.i2 = i2
+        pass
+    
+    def set_p3(self,x3,y3,j3,i3):
+        self.x3 = x3
+        self.y3 = y3
+        self.j3 = j3
+        self.i3 = i3
+        self.tij = np.array([self.i1 , self.j1 , self.i2 , \
+            self.j2 , self.i3 , self.j3])
+        self.txy = np.array([self.x1 , self.y1 , self.x2 , \
+            self.y2 , self.x3 , self.y3])
+        self.q,self.xy0 = Trans(self.tij,self.txy)
+        xy = self.q.dot(self.xiyj) + self.xy0
+        self.xy_init = xy
+        pass
+
+
 
 #扫描图像类别
 class OCR:
