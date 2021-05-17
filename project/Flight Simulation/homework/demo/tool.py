@@ -1,11 +1,15 @@
 import cv2 as cv
 import numpy as np
-import matplotlib.pyplot as plt
 
-'''
-插值拟合部分
-'''
-#获得大X矩阵
+
+
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+二次插值部分begin
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+#输入x数列，获得大X矩阵
 def getX(x):
     n = x.size
     X = np.zeros([n,n])
@@ -14,14 +18,14 @@ def getX(x):
         pass
     return X.T
 
-#多项式拟合，返回系数数列
+#输入x和与之对应的y，多项式拟合，返回系数数列a
 def PnFitted(x,y):
     n = x.size
     X = getX(x)
     A = np.linalg.inv(X).dot(y)
     return A
 
-#根据已有的x,y插值拟合xin
+#根据已有的x,y插值拟合输入量xin，选取二次插值
 def Interpoly(xin,x,y):
     if xin in x:
         k = np.argwhere(x==xin)
@@ -58,20 +62,31 @@ def Interpoly(xin,x,y):
         a = PnFitted(xx,yy)
         return a[0] + a[1] * xin + a[2] * xin**2
 
-#人工二值化
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+二次插值部分end
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+图像处理begin
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+#人工二值化，传入值为矩阵，以及上界点up（默认5），超出up置为0，否则置为1
 def get_filter0(mat,up=5):
     M,N = np.shape(mat)
     filter0 = np.zeros([M,N])
     for j in range(M):
         for i in range(N):
-            if mat[j][i] < up: #这里的10就为初始筛选值
+            if mat[j][i] < up: #这里的5就为初始筛选值
                 filter0[j][i] = 1 #有颜色的地方设置为1
                 pass
             pass
         pass
     return filter0
 
-#自动筛选原点
+#自动筛选原点，传入灰度矩阵，返回M0，N0，和Sum矩阵
 def get0(mat):
     M,N = np.shape(mat)
     Sum=np.zeros([M , N])
@@ -91,7 +106,7 @@ def get0(mat):
     N0 = pos-N*M0
     return M0 , N0 , Sum
 
-#均值矩阵
+#获取九宫格均值矩阵，传入矩阵，用以均值筛选
 def get_mean(mat):
     M,N = np.shape(mat)
     mean = np.zeros([M , N])
@@ -106,8 +121,8 @@ def get_mean(mat):
         pass
     return mean
 
-#均值过滤
-def mean_filter(mat,limit=0.33): #均值过滤函数
+#均值过滤，输入矩阵与均值限制limit，一般limit不低于0.34，返回过滤一步后的矩阵
+def mean_filter(mat,limit=0.34): #均值过滤函数
     mean = get_mean(mat)
     M,N = np.shape(mat)
     for j in range(1,M-1):
@@ -122,7 +137,7 @@ def mean_filter(mat,limit=0.33): #均值过滤函数
         pass
     return mean
 
-#提取点
+#提取点,将矩阵中所有的有效点位置坐标（i，j）提取并返回一个2*n的数组
 def get_xiyj(mat):
     xi = []
     yj = []
@@ -141,7 +156,7 @@ def get_xiyj(mat):
     xiyj = xiyj.T
     return xiyj
 
-#转换矩阵函数
+#转换矩阵函数，给定ij位置以及对应的xy坐标，返回转换矩阵q和不动点xy0
 def Trans(ij,xy):
     i1,j1,i2,j2,i3,j3 = ij
     x1,y1,x2,y2,x3,y3 = xy
@@ -160,6 +175,55 @@ def Trans(ij,xy):
     xy0 = np.array([[x0],[y0]])
     return q , xy0
     pass 
+
+# 单步元胞自动拣选机作用，输入行向量处理
+def CAiter(x):
+    a = np.zeros(x.size)
+    for i in range(1,x.size-1):
+        if x[i] == 1 and x[i-1] == 0 and x[i+1] == 0:
+            a[i] = 1
+            pass
+        elif x[i] == 1 and x[i-1] == 1 and x[i+1] == 0:
+            a[i] = 0
+            a[i-1] = 1
+            pass
+        elif x[i] == 1 and x[i-1] == 0 and x[i+1] == 1:
+            a[i] = 0
+            a[i+1] = 1
+            pass
+        elif x[i]*x[i-1]*x[i+1] == 1:
+            a[i] = 1
+            pass
+        else:
+            a[i] = 0
+            pass
+        pass
+    return a
+    pass
+
+#多步元胞自动拣选机作用，迭代到收敛解并返回
+def CA(x):
+    while x.sum()!= CAiter(x).sum():
+        x = CAiter(x)
+        pass
+    return x
+    pass
+
+#对于矩阵整体行、列进行元胞自动机拣选作用，需要制定M0和N0避免对坐标轴作用
+def CAfilter(mat,M0,N0):
+    M,N = mat.shape
+    mat0 = np.zeros([M,N])
+    for j in range(M):
+        if j!= M0:
+            mat0[j] = CA(mat[j])
+            pass
+        pass
+    for i in range(N):
+        if i!= N0:
+            mat0.T[i]= CA(mat.T[i])
+            pass
+        pass
+    return mat0
 
 #排序与去重
 def sort2(x,y):
@@ -201,51 +265,22 @@ def dup2(x,y):
     return xd , yd
     pass
 
-def CAiter(x):
-    a = np.zeros(x.size)
-    for i in range(1,x.size-1):
-        if x[i] == 1 and x[i-1] == 0 and x[i+1] == 0:
-            a[i] = 1
-            pass
-        elif x[i] == 1 and x[i-1] == 1 and x[i+1] == 0:
-            a[i] = 0
-            a[i-1] = 1
-            pass
-        elif x[i] == 1 and x[i-1] == 0 and x[i+1] == 1:
-            a[i] = 0
-            a[i+1] = 1
-            pass
-        elif x[i]*x[i-1]*x[i+1] == 1:
-            a[i] = 1
-            pass
-        else:
-            a[i] = 0
-            pass
+#图象类别
+class Pic:
+    def __init__(self,name,up=4,limit=0.34):
+        self.name = name
+        self.pic = cv.imread(name)
+        self.gray = cv.cvtColor(self.pic,cv.COLOR_BGR2GRAY)
+        self.mat = np.array(self.gray)
+        self.M , self.N = np.shape(self.mat)
+        self.filter0 = get_filter0(self.mat,up)
+        self.M0 , self.N0 , self.Sum = get0(self.filter0)
+        filter1 = CAfilter(self.filter0)
+        filter1 = mean_filter(self.filter0,limit)
+        self.filter1 = mean_filter(filter1,limit)
+        self.filter2 = CAfilter(self.filter1,self.M0,self.N0)
+        self.xiyj = get_xiyj(self.filter2)
         pass
-    return a
-    pass
-
-def CA(x):
-    while x.sum()!= CAiter(x).sum():
-        x = CAiter(x)
-        pass
-    return x
-    pass
-
-def CAfilter(mat,M0,N0):
-    M,N = mat.shape
-    mat0 = np.zeros([M,N])
-    for j in range(M):
-        if j!= M0:
-            mat0[j] = CA(mat[j])
-            pass
-        pass
-    for i in range(N):
-        if i!= N0:
-            mat0.T[i]= CA(mat.T[i])
-            pass
-        pass
-    return mat0
 
 #扫描图像类别
 class OCR:
@@ -255,12 +290,13 @@ class OCR:
         self.pic = cv.imread(name)
         self.gray = cv.cvtColor(self.pic,cv.COLOR_BGR2GRAY)
         self.mat = np.array(self.gray)
-        self.M,self.N = np.shape(self.mat)
+        self.M , self.N = np.shape(self.mat)
         self.filter0 = get_filter0(self.mat,up)
         self.M0 , self.N0 , self.Sum = get0(self.filter0)
+        filter1 = CAfilter(self.filter0,self.M0,self.N0)
         filter1 = mean_filter(self.filter0,limit)
-        self.filter1=mean_filter(filter1,limit)
-        self.filter2=CAfilter(self.filter1,self.M0,self.N0)
+        self.filter1 = mean_filter(filter1,limit)
+        self.filter2 = CAfilter(self.filter1,self.M0,self.N0)
         self.xiyj = get_xiyj(self.filter2)
         pass
     
@@ -285,7 +321,7 @@ class OCR:
         self.i3 = i3
         pass
     
-    def process(self):
+    def process(self,xu=0,yu=0):
         self.tij = np.array([self.i1 , self.j1 , self.i2 , \
             self.j2 , self.i3 , self.j3])
         self.txy = np.array([self.x1 , self.y1 , self.x2 , \
@@ -298,7 +334,7 @@ class OCR:
         xx = []
         yy = []
         for k in range(np.shape(xy)[1]):
-            if x[k] > 1.05*self.x1 and y[k] > 1.05*self.y1:
+            if x[k] > xu and y[k] > yu:
                 xx.append(x[k])
                 yy.append(y[k])
                 pass
@@ -310,3 +346,7 @@ class OCR:
         xxyy = np.c_[xx,yy]
         self.xy = xxyy.T
         pass
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+图像处理end
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
