@@ -156,7 +156,7 @@ def get_xiyj(mat):
     xiyj = xiyj.T
     return xiyj
 
-#转换矩阵函数，给定ij位置以及对应的xy坐标，返回转换矩阵q和不动点xy0
+#转换矩阵函数，给定ij位置以及对应的xy坐标，返回转换矩阵q和转换零点坐标xy0
 def Trans(ij,xy):
     i1,j1,i2,j2,i3,j3 = ij
     x1,y1,x2,y2,x3,y3 = xy
