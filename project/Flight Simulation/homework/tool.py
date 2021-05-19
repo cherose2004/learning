@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import sqlite3 as sq
 
 
 
@@ -381,4 +382,48 @@ class OCR:
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 图像处理end
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+数据库交互begin
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+#把x,y写入‘DbName’数据库的‘TableName’表格里
+def writeSQL(x,y,DbName,TableName):
+    con = sq.connect(DbName+'.db')
+    cur = con.cursor()
+    command = "create table " + TableName + \
+        "(x double UNIQUE primary key,y double);"
+    cur.execute(command)
+    print('successfully create ' + DbName)
+    print('successfully create ' + TableName)
+    for i in range(x.size):
+        data = str(x[i]) + ',' + str(y[i]) #生成行数据
+        cur.execute(('INSERT INTO ' + TableName + ' VALUES (%s)')%data) #塞入 INSERT 行的值
+        pass
+    con.commit() #提交修改
+    con.close()
+    pass
+
+#从‘DbName’数据库的‘TableName’表格里，读出x,y数据
+def readSQL(DbName,TableName):
+    con = sq.connect(DbName+'.db')
+    cur = con.cursor()
+    Data = cur.execute("Select x , y from " + TableName)
+    x = []
+    y = []
+    for row in Data:
+        x.append(row[0])
+        y.append(row[1])
+        pass
+    x = np.array(x)
+    y = np.array(y)
+    con.close()
+    return x , y
+    pass
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+数据库交互end
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
