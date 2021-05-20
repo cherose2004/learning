@@ -307,6 +307,109 @@ def dup2(x,y):
     return xd , yd
     pass
 
+class Pic:
+
+    def __init__(self , name , up = 4):
+        self.name = name
+        self.pic = cv.imread(name)#读取
+        gray = cv.cvtColor(self.pic,cv.COLOR_BGR2GRAY)
+        self.gray = np.array(gray)
+        self.binary = get_filter0(self.gray , up)
+        self.M0 , self.N0 = get0(self.binary)
+        pass
+
+    # 选择筛选方式，
+    # m表示均值过滤，c表示元胞自动分拣机过滤
+    # 不区分大小写
+    # limit表示均值过滤给定的限制，默认0.34
+    def Filter(self,way = 'mc',limit = 0.34):
+        L = len(way)
+        tmp = self.binary
+        for i in range(L):
+            if way[i] in ['c','C']:
+                tmp = CAfilter(tmp , self.M0 , self.N0)
+                pass
+            elif way[i] in ['m','M']:
+                tmp = mean_filter(tmp , limit)
+                pass
+            else:
+                pass
+            pass
+        self.fil = tmp
+        self.xiyj = get_xiyj(tmp)
+        pass
+
+    def set_p1(self,x1,y1,j1 = -1,i1 = -1):
+        self.x1 = x1
+        self.y1 = y1
+        if j1 == -1 and i1 == -1:
+            self.i1 = self.N0
+            self.j1 = self.M0
+            pass
+        else:
+            self.i1 = i1
+            self.j1 = j1
+        pass
+    
+    def set_p2(self,x2,y2,j2,i2):
+        self.x2 = x2
+        self.y2 = y2
+        self.j2 = j2
+        self.i2 = i2
+        pass
+    
+    def set_p3(self,x3,y3,j3,i3):
+        self.x3 = x3
+        self.y3 = y3
+        self.j3 = j3
+        self.i3 = i3
+        pass
+
+    #得到转换矩阵,转换后的点集存在xy_init中
+    def get_Trans(self):
+        tij = np.array([self.i1 , self.j1 , self.i2 , \
+            self.j2 , self.i3 , self.j3])
+        txy = np.array([self.x1 , self.y1 , self.x2 , \
+            self.y2 , self.x3 , self.y3])
+        self.q , self.xy0 = Trans(tij , txy)
+        xy = self.q.dot(self.xiyj) + self.xy0
+        self.xy_init = xy
+        pass
+
+    #抠去坐标轴,去重，排列
+    #再<xl和<yl的点直接作为坐标轴抠去
+    def process(self, xl = 'a' , yl = 'a'):
+        if type(xl) == str and type(yl) == str:
+            xl = np.abs(self.x3 - self.x2) * 0.05 + min([self.x2 , self.x3])
+            yl = np.abs(self.y3 - self.y2) * 0.05 + min([self.y2,self.y3])
+            pass
+        else:
+            pass
+        x = []
+        y = []
+        for k in range(self.xy_init[0].size):
+            xk , yk = self.xy_init[0][k] , self.xy_init[1][k]
+            if xk > xl and yk > yl:
+                x.append(xk)
+                y.append(yk)
+                pass
+            pass
+        x = np.array(x)
+        y = np.array(y)
+        sort2(x,y)
+        x , y = dup2(x,y)
+        self.xy = np.c_[x,y].T
+        pass
+
+
+
+
+
+
+
+
+
+
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 图像处理end
