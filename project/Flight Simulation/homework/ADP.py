@@ -14,7 +14,7 @@ def getX(x):
     n = x.size
     X = np.zeros([n,n])
     for i in range(n):
-        X[i]=x**i
+        X[i] = x**i
         pass
     return X.T
     pass
