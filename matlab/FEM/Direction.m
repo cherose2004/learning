@@ -6,4 +6,3 @@ lam2 = sin(theta);
 dire = [lam1 , lam2 , 0 , 0 ;
         0 , 0 , lam1 , lam2];
 end
-

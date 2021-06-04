@@ -5,4 +5,3 @@ Kp = Kpole(E , A , L);
 lambda = Direction(theta);
 K = lambda.' * Kp * lambda;
 end
-
