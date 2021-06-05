@@ -297,10 +297,10 @@ class SysPole:
                     continue
                 else:
                     connect = self.dictConnection[str(j+1) + str(i+1)]
-                    E = connect[0]
-                    A = connect[1]
+                    e = connect[0]
+                    a = connect[1]
                     l = connect[2]
-                    ke = self.getK(E , A , l)
+                    ke = self.getK(e , a , l)
                     lam = connect[3]
                     nodej = self.NodeList[j]
                     nodei = self.NodeList[i]
