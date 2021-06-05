@@ -1,9 +1,18 @@
 import numpy as np
+import matplotlib.pyplot as plt
 NaN = np.NaN
 
 class Node:
 
     def __init__(self , x = 0 , y = 0 , Px = NaN , Py = NaN , u = NaN , v = NaN):
+
+        '''
+        生成节点类型，需要给出x,y坐标
+        Px，Py
+        u，v
+        约束可以不给出，默认为待求值
+        '''
+
         self.x = x
         self.y = y
         self.setP(Px , Py)
@@ -11,11 +20,21 @@ class Node:
         pass
 
     def setP(self , Px = NaN , Py = NaN):
+
+        '''
+        设置Px和Py约束，默认为未知量，待求
+        '''
+
         self.Px = Px
         self.Py = Py
         pass
 
     def setUV(self , u = NaN , v = NaN):
+
+        '''
+        设置u和v约束，默认为未知量，待求
+        '''
+
         self.u = u
         self.v = v
         pass
@@ -23,16 +42,35 @@ class Node:
     pass
 
 class SysPole:
+
+
     def __init__(self , ls):
+
+        '''
+        初始化函数，传入一个Node类列表，从而建立系统
+        NodeList : 存放着节点顺序表
+        N : 为节点个数
+        NodeConnection : 为连接矩阵，有向，暂时为全0列
+        dictK : 字典类型，用以存放各种名称的部分刚度矩阵
+        dictConnection : 字典类型，用以存放某个连接信息
+        K : 组装刚度矩阵，暂时全为0
+        '''
+
         self.NodeList = ls
         self.N = len(ls)
         self.NodeConnection = np.zeros([self.N , self.N])
         self.dictK = dict()
+        self.dictConnection = dict()
         self.K = np.zeros([2 * self.N , 2 * self.N])
         print("successfully build system !")
         pass
 
+
     def getK(self , E = 200e9 , A = 0.01 , l = 1):
+
+        '''
+        根据E，A，l给出杆单元的局部刚度矩阵
+        '''
         mat = np.array([
             [1 , -1],
             [-1 , 1]
@@ -42,6 +80,13 @@ class SysPole:
         pass
 
     def connect(self , j , i , E = 200e9 , A = 0.01):
+
+        '''
+        根据给定的刚度参数E，A来连接节点j , i，有向
+        更新NodeConnection连接矩阵信息
+        并且在dictK中附加键名为'ji'的刚度矩阵键值
+        '''
+
         self.NodeConnection[j-1][i-1] = 1
         node1 = self.NodeList[j-1]
         node2 = self.NodeList[i-1]
@@ -57,9 +102,18 @@ class SysPole:
         k = self.getK(E , A , l)
         K = dire.T.dot( k ).dot( dire )
         self.dictK[str(j) + str(i)] = K
+        connect = [E , A , l , dire]
+        self.dictConnection[str(j) + str(i)] = connect
         pass
 
+
     def addK(self , j , i):
+        
+        '''
+        在总体刚度矩阵K中，组装上dictK['ji']这一个刚度矩阵
+        分开传入j和i即可
+        '''
+
         Kji = self.dictK[str(j) + str(i)]
         kjj = Kji[0:2 , 0:2]
         kii = Kji[2:4 , 2:4]
@@ -71,7 +125,14 @@ class SysPole:
         self.K[2*(i-1) : 2*i , 2*(j-1) : 2*j] += kij
         pass
 
+
     def generate(self):
+
+        '''
+        connect结束后，进行系统生成
+        会更新最终的组装刚度矩阵K
+        '''
+
         for j in range(self.N):
             for i in range(self.N):
                 if self.NodeConnection[j][i] == 0:
@@ -84,15 +145,34 @@ class SysPole:
         print("successfully get matrix K !")
         pass
 
+
     def setP(self , k , Px = NaN , Py = NaN):
+
+        '''
+        设置k号节点上Px和Py约束参数，默认不设置，即为代求量
+        '''
+
         self.NodeList[k-1].setP(Px , Py)
         pass
 
+
     def setUV(self , k , u = NaN , v = NaN):
+
+        '''
+        设置k号节点上u和v约束参数，默认不设置，即为代求量
+        '''
+
         self.NodeList[k-1].setUV(u , v)
         pass
 
+
     def getpartK(self , row , col):
+        
+        '''
+        得到刚度矩阵row和col所控制的切片矩阵
+        返回刚度矩阵K，在row中序号、以及col序号所相交形成的矩阵
+        '''
+
         m = row.size
         n = col.size
         mat = np.zeros([m , n])
@@ -104,7 +184,15 @@ class SysPole:
         return mat
         pass
 
+
     def modifyK(self , pNaN , uvNaN):
+        
+        '''
+        将K刚度矩阵调整，分割为4块
+        让已知约束力和已知约束位移对应在一起
+        生成：m*n , m*m , n*n , n*m的四块分块矩阵并返回
+        '''
+
         n = pNaN.size
         m = uvNaN.size
         k11 = self.getpartK(uvNaN , pNaN)
@@ -116,6 +204,13 @@ class SysPole:
 
 
     def solve(self):
+
+        '''
+        在约束给定以后，求解整个系统情形
+        方法为分块矩阵求解，调整对应已知量关系求解
+        更新信息进入NodeList中的每一个节点
+        并且在连接矩阵的索引下，生成内力矩阵
+        '''
         
         #提取借点已知信息
         P = np.zeros([self.N , 2])
@@ -193,13 +288,48 @@ class SysPole:
             self.NodeList[k].setUV(u = uv[2*k] , v = uv[2*k+1])
             pass
         print("successfully update node infomation !")
+
+        #生成各个节点杆力
+        self.Npole = np.zeros([self.N , self.N])
+        for j in range(self.N):
+            for i in range(self.N):
+                if self.NodeConnection[j][i] == 0:
+                    continue
+                else:
+                    connect = self.dictConnection[str(j+1) + str(i+1)]
+                    E = connect[0]
+                    A = connect[1]
+                    l = connect[2]
+                    ke = self.getK(E , A , l)
+                    lam = connect[3]
+                    nodej = self.NodeList[j]
+                    nodei = self.NodeList[i]
+                    delta = np.array([
+                        nodej.u , nodej.v , nodei.u , nodei.v
+                    ])
+                    s = ke.dot(lam).dot(delta)
+                    self.Npole[j][i] = s[1]
+                    pass
+                pass
+            pass
         pass
 
-    def info(self):
+
+    def info(self , precision = 5):
+        
+        '''
+        打印报告信息
+        '''
+
         print('Report : Information of Each Node')
         for i in range(20):
             print('*' , end = '*')
             pass
+        print('\nConnection Matrix : ')
+        print(self.NodeConnection)
+        print('\n')
+        print('Internel Force Matrix : ')
+        print(self.Npole)
         print('\n\n')
         for k in range(self.N):
             for i in range(10):
@@ -220,14 +350,53 @@ class SysPole:
         for i in range(20):
             print('*' , end = '*')
             pass
+
+        #绘图并展示
+        plt.figure(facecolor = 'white')
+        for i in range(self.N):
+            node = self.NodeList[i]
+            px = node.x
+            py = node.y
+            plt.scatter(px , py , s = 300 , alpha = 0.7 , color = 'r')
+            plt.text(px , py , '(' + str(round(node.u , precision)) + ' , ' + str(round(node.v , precision)) + ')' , fontsize = 10 , color = 'b')
+            pass
+        for j in range(self.N):
+            for i in range(self.N):
+                if self.NodeConnection[j][i] == 0:
+                    continue
+                else:
+                    nodej = self.NodeList[j]
+                    nodei = self.NodeList[i]
+                    plt.plot([nodej.x , nodei.x] , [nodej.y , nodei.y] , linewidth = 5 , alpha = 0.7 , color = 'g')
+                    px = 0.4*nodej.x + 0.6*nodei.x
+                    py = 0.4*nodej.y + 0.6*nodei.y
+                    plt.text(px , py , str(self.Npole[j][i].round(precision)) , fontsize = 10 , color = 'k')
+                    pass
+                pass
+            pass
+        plt.axis('off')
+        plt.title('picture' , fontsize = 20)
+        plt.show()
         pass
 
-    def export(self , filename = 'report.txt'):
+
+    def export(self , filename = 'report.txt' , picname = 'pic.png' , precision = 5):
+        
+        '''
+        将报告写入filename文件中
+        画图
+        给出精度格式
+        '''
+
         f = open(filename , mode = 'w' , encoding = 'utf-8')
         f.write('Report : Information of Each Node\n')
         for i in range(40):
             f.write('*')
             pass
+        f.write('\nConnection Matrix : \n')
+        f.write(str(self.NodeConnection))
+        f.write('\nInternel Force Martix : \n')
+        f.write(str(self.Npole))
         f.write('\n\n')
         for k in range(self.N):
             for i in range(20):
@@ -250,6 +419,33 @@ class SysPole:
             pass
         f.close()
         print("successfully write to file " + filename + ' !')
+
+        #绘图并存储
+        plt.figure(facecolor = 'white')
+        for i in range(self.N):
+            node = self.NodeList[i]
+            px = node.x
+            py = node.y
+            plt.scatter(px , py , s = 300 , alpha = 0.7 , color = 'r')
+            plt.text(px , py , '(' + str(round(node.u , precision)) + ' , ' + str(round(node.v , precision)) + ')' , fontsize = 10 , color = 'b')
+            pass
+        for j in range(self.N):
+            for i in range(self.N):
+                if self.NodeConnection[j][i] == 0:
+                    continue
+                else:
+                    nodej = self.NodeList[j]
+                    nodei = self.NodeList[i]
+                    plt.plot([nodej.x , nodei.x] , [nodej.y , nodei.y] , linewidth = 5 , alpha = 0.7 , color = 'g')
+                    px = 0.4*nodej.x + 0.6*nodei.x
+                    py = 0.4*nodej.y + 0.6*nodei.y
+                    plt.text(px , py , str(self.Npole[j][i].round(precision)) , fontsize = 10 , color = 'k')
+                    pass
+                pass
+            pass
+        plt.axis('off')
+        plt.title(picname  , fontsize = 20)
+        plt.savefig(picname)
         pass
 
     pass
