@@ -338,6 +338,7 @@ class SysPole:
             print('\n')
             node = self.NodeList[k]
             print('Node' + str(k+1) + ':\n')
+            print('Position : (' , node.x , ' , ' , node.y , ')\n\n')
             print('Externel Load : ')
             print('Horizontal Load Px = ' , node.Px)
             print('Vertical Load Py = ' , node.Py)
@@ -358,7 +359,8 @@ class SysPole:
             px = node.x
             py = node.y
             plt.scatter(px , py , s = 300 , alpha = 0.7 , color = 'r')
-            plt.text(px , py , '(' + str(round(node.u , precision)) + ' , ' + str(round(node.v , precision)) + ')' , fontsize = 10 , color = 'b')
+            plt.text(px , py , '(' + str(round(node.u , precision)) + ' , ' + str(round(node.v , precision)) + ')' , fontsize = 15 , color = 'b')
+            plt.text(px , py , str(i+1) , fontsize = 40 , color = 'gray' , alpha = 0.8)
             pass
         for j in range(self.N):
             for i in range(self.N):
@@ -370,7 +372,7 @@ class SysPole:
                     plt.plot([nodej.x , nodei.x] , [nodej.y , nodei.y] , linewidth = 5 , alpha = 0.7 , color = 'g')
                     px = 0.4*nodej.x + 0.6*nodei.x
                     py = 0.4*nodej.y + 0.6*nodei.y
-                    plt.text(px , py , str(self.Npole[j][i].round(precision)) , fontsize = 10 , color = 'k')
+                    plt.text(px , py , str(self.Npole[j][i].round(precision)) , fontsize = 15 , color = 'k')
                     pass
                 pass
             pass
@@ -405,6 +407,7 @@ class SysPole:
             f.write('\n')
             node = self.NodeList[k]
             f.write('Node' + str(k+1) + ':\n')
+            f.write('Position : (' + str(node.x) + ' , ' + str(node.y) + ')\n\n')
             f.write('Externel Load : \n')
             f.write('Horizontal Load Px = ' + str(node.Px) + '\n')
             f.write('Vertical Load Py = ' + str(node.Py) + '\n')
@@ -427,7 +430,8 @@ class SysPole:
             px = node.x
             py = node.y
             plt.scatter(px , py , s = 300 , alpha = 0.7 , color = 'r')
-            plt.text(px , py , '(' + str(round(node.u , precision)) + ' , ' + str(round(node.v , precision)) + ')' , fontsize = 10 , color = 'b')
+            plt.text(px , py , '(' + str(round(node.u , precision)) + ' , ' + str(round(node.v , precision)) + ')' , fontsize = 15 , color = 'b')
+            plt.text(px , py , str(i+1) , fontsize = 40 , color = 'gray' , alpha = 0.8)
             pass
         for j in range(self.N):
             for i in range(self.N):
@@ -439,7 +443,7 @@ class SysPole:
                     plt.plot([nodej.x , nodei.x] , [nodej.y , nodei.y] , linewidth = 5 , alpha = 0.7 , color = 'g')
                     px = 0.4*nodej.x + 0.6*nodei.x
                     py = 0.4*nodej.y + 0.6*nodei.y
-                    plt.text(px , py , str(self.Npole[j][i].round(precision)) , fontsize = 10 , color = 'k')
+                    plt.text(px , py , str(self.Npole[j][i].round(precision)) , fontsize = 15 , color = 'k')
                     pass
                 pass
             pass
