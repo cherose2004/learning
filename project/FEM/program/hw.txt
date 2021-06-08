@@ -1,0 +1,552 @@
+Report : Information of Each Node
+****************************************
+Connection Matrix : 
+[[0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 1. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1.
+  1. 1.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  1. 1.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0.]]
+Internel Force Martix : 
+[[     0.              0.          -5658.31972307  -4333.2815908
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.           1317.49755126  -2209.19893197
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.           1835.95057596
+   -1959.14624173  -3913.92375562      0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+    1736.85538644  -6501.43395131      0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.           2270.49287872   2767.63108036  -4947.81720879
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.            702.96193327  -9766.06512989
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.          -3761.76938023
+    4616.98334277      0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+   -7064.6390282   -1060.34327854  -8768.21063954      0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.           5373.92498419   -535.23856761      0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.           1871.64956365   8411.18388092
+   -8020.83718111      0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.           6121.29844262
+  -11063.71140815      0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+   -3018.19951342  14049.80764438  -1852.91975679      0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.          -1852.91975679 -15425.08764469      0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.          -3018.19951342   8411.18388092
+    6121.29844262      0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.          -8020.83718111
+  -11063.71140815      0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+    1871.64956365  -1060.34327854   5373.92498419      0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.          -8768.21063954   -535.23856761      0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.          -7064.6390282   -3761.76938023
+   -9766.06512989  -4947.81720879      0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.           4616.98334277
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+     702.96193327   2767.63108036      0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.           2270.49287872  -6501.43395131  -3913.92375562
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.           1736.85538644  -1959.14624173
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.           1835.95057596
+   -2209.19893197  -4333.2815908 ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+    1317.49755126  -5658.31972307]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]
+ [     0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.              0.              0.
+       0.              0.        ]]
+
+--------------------
+Node1:
+Position : (0 , 0.0)
+
+Externel Load : 
+Horizontal Load Px = 3064.092797647294
+Vertical Load Py = 8722.41252072207
+
+Displacement : 
+Horizontal Displacement u = 0.0
+Vertical Displacement v = 0.0
+
+--------------------
+Node2:
+Position : (1.0 , 0.0)
+
+Externel Load : 
+Horizontal Load Px = 931.6114526916572
+Vertical Load Py = 1277.587479277875
+
+Displacement : 
+Horizontal Displacement u = 0.0
+Vertical Displacement v = 0.0
+
+--------------------
+Node3:
+Position : (0 , 1.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -5.923796303994329e-05
+Vertical Displacement v = -4.0416569450534104e-05
+
+--------------------
+Node4:
+Position : (1.0 , 1.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -4.6124030354539406e-05
+Vertical Displacement v = -1.5779992371210942e-05
+
+--------------------
+Node5:
+Position : (0 , 2.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -0.00010956672896679891
+Vertical Displacement v = -5.4410471177212084e-05
+
+--------------------
+Node6:
+Position : (1.0 , 2.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -9.334892269025637e-05
+Vertical Displacement v = -6.221880630912222e-05
+
+--------------------
+Node7:
+Position : (0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -7.581410745963444e-05
+Vertical Displacement v = -3.464167774605107e-05
+
+--------------------
+Node8:
+Position : (1.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -0.00010268388874697038
+Vertical Displacement v = -0.000131976414379751
+
+--------------------
+Node9:
+Position : (1.0 , 4.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 0.0001379392414150189
+Vertical Displacement v = -0.00018243812172405506
+
+--------------------
+Node10:
+Position : (2.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -0.00011025776930798153
+Vertical Displacement v = -0.0005074054893640399
+
+--------------------
+Node11:
+Position : (2.0 , 4.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 0.00013411610878921173
+Vertical Displacement v = -0.0004940365639093902
+
+--------------------
+Node12:
+Position : (3.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -5.017788444423181e-05
+Vertical Displacement v = -0.0007657776777516502
+
+--------------------
+Node13:
+Position : (3.0 , 4.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = -10000.0
+
+Displacement : 
+Horizontal Displacement u = 5.5089598731023074e-05
+Vertical Displacement v = -0.0007873362457046699
+
+--------------------
+Node14:
+Position : (4.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 5.0177884444230396e-05
+Vertical Displacement v = -0.0007657776777516503
+
+--------------------
+Node15:
+Position : (4.0 , 4.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = -10000.0
+
+Displacement : 
+Horizontal Displacement u = -5.508959873102437e-05
+Vertical Displacement v = -0.0007873362457046697
+
+--------------------
+Node16:
+Position : (5.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 0.00011025776930798012
+Vertical Displacement v = -0.00050740548936404
+
+--------------------
+Node17:
+Position : (5.0 , 4.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -0.00013411610878921309
+Vertical Displacement v = -0.0004940365639093904
+
+--------------------
+Node18:
+Position : (6.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 0.00010268388874696905
+Vertical Displacement v = -0.00013197641437975123
+
+--------------------
+Node19:
+Position : (6.0 , 4.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = -0.0001379392414150203
+Vertical Displacement v = -0.00018243812172405522
+
+--------------------
+Node20:
+Position : (7.0 , 3.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 7.581410745963321e-05
+Vertical Displacement v = -3.4641677746050866e-05
+
+--------------------
+Node21:
+Position : (6.0 , 2.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 9.334892269025565e-05
+Vertical Displacement v = -6.221880630912246e-05
+
+--------------------
+Node22:
+Position : (7.0 , 2.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 0.00010956672896679821
+Vertical Displacement v = -5.441047117721186e-05
+
+--------------------
+Node23:
+Position : (6.0 , 1.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 4.612403035453916e-05
+Vertical Displacement v = -1.5779992371211094e-05
+
+--------------------
+Node24:
+Position : (7.0 , 1.0)
+
+Externel Load : 
+Horizontal Load Px = 0.0
+Vertical Load Py = 0.0
+
+Displacement : 
+Horizontal Displacement u = 5.923796303994305e-05
+Vertical Displacement v = -4.0416569450533955e-05
+
+--------------------
+Node25:
+Position : (6.0 , 0.0)
+
+Externel Load : 
+Horizontal Load Px = -931.6114526916529
+Vertical Load Py = 1277.5874792779005
+
+Displacement : 
+Horizontal Displacement u = 0.0
+Vertical Displacement v = 0.0
+
+--------------------
+Node26:
+Position : (7.0 , 0.0)
+
+Externel Load : 
+Horizontal Load Px = -3064.09279764729
+Vertical Load Py = 8722.412520722044
+
+Displacement : 
+Horizontal Displacement u = 0.0
+Vertical Displacement v = 0.0
+
+****************************************
