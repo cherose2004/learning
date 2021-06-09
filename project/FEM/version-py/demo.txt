@@ -1,19 +1,23 @@
 Report : Information of Each Node
+
 ****************************************
+
 Connection Matrix : 
 [[0. 1. 0. 0.]
  [0. 0. 0. 0.]
  [1. 1. 0. 1.]
  [1. 1. 0. 0.]]
-Internel Force Martix : 
+
+Internel Force Matrix : 
 [[    0.          4545.45454545     0.             0.        ]
  [    0.             0.             0.             0.        ]
  [-5454.54545455 -6428.24346533     0.             0.        ]
  [ 7713.8921584   4545.45454545     0.             0.        ]]
 
---------------------
-Node1:
-Position : (0.2 , 0.2)
+
+------------------------------
+ Node1:
+ Position : ( 0.2 , 0.2 )
 
 Externel Load : 
 Horizontal Load Px = 0.0
@@ -23,9 +27,9 @@ Displacement :
 Horizontal Displacement u = -5.4545454545454546e-05
 Vertical Displacement v = 0.0002727272727272728
 
---------------------
-Node2:
-Position : (0.2 , 0)
+------------------------------
+ Node2:
+ Position : ( 0.2 , 0 )
 
 Externel Load : 
 Horizontal Load Px = 0.0
@@ -35,9 +39,9 @@ Displacement :
 Horizontal Displacement u = 4.545454545454545e-05
 Vertical Displacement v = 0.00022727272727272733
 
---------------------
-Node3:
-Position : (0 , 0.2)
+------------------------------
+ Node3:
+ Position : ( 0 , 0.2 )
 
 Externel Load : 
 Horizontal Load Px = 10000.0
@@ -47,9 +51,9 @@ Displacement :
 Horizontal Displacement u = 0.0
 Vertical Displacement v = 0.0
 
---------------------
-Node4:
-Position : (0 , 0)
+------------------------------
+ Node4:
+ Position : ( 0 , 0 )
 
 Externel Load : 
 Horizontal Load Px = -10000.0
