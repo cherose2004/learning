@@ -1,4 +1,4 @@
-# modyfied by bcynuaa 2021/6/8
+# modyfied by bcynuaa 2021/6/9
 
 
 import numpy as np
@@ -44,8 +44,11 @@ class Node:
 
     pass
 
-class SysPole:
 
+
+
+
+class SysPole:
 
     def __init__(self , ls):
 
@@ -91,7 +94,7 @@ class SysPole:
         '''
         根据给定的刚度参数E，A来连接节点j , i，有向
         更新NodeConnection连接矩阵信息
-        并且在dictK中附加键名为'ji'的刚度矩阵键值
+        并且在dictK中附加键名为'j,i'的刚度矩阵键值
         '''
 
         self.NodeConnection[j-1][i-1] = 1
@@ -117,7 +120,7 @@ class SysPole:
     def __addK(self , j , i):
         
         '''
-        在总体刚度矩阵K中，组装上dictK['ji']这一个刚度矩阵
+        在总体刚度矩阵K中，组装上dictK['j,i']这一个刚度矩阵
         分开传入j和i即可
         '''
 
@@ -437,7 +440,7 @@ class SysPole:
         pass
 
 
-    def info(self , precision = 5):
+    def info(self):
         
         '''
         打印报告信息
@@ -449,7 +452,7 @@ class SysPole:
         pass
 
 
-    def export(self , filename = 'report.txt' , picname = 'pic.png' , precision = 5):
+    def export(self , filename = 'report.txt' , picname = 'pic.png'):
         
         '''
         将报告写入filename文件中
