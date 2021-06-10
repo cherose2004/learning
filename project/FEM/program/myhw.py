@@ -90,3 +90,58 @@ sys.generate()
 sys.solve() # 系统求解
 sys.getpic(ftsize = 15) # 得到系统图片
 sys.export('hw.txt' , 'hw.png') # 导出报告以及图片
+
+
+#导出信息报告
+import xlwt
+
+excel = xlwt.Workbook(encoding = 'utf-8')
+sheet1 = excel.add_sheet('轴力信息表')
+sheet2 = excel.add_sheet('节点信息表')
+
+
+#轴力信息录入
+sheet1.write(0 , 0 , '轴编号')
+sheet1.write(0 , 1 , '轴起点编号')
+sheet1.write(0 , 2 , '轴终点编号')
+sheet1.write(0 , 3 , '轴力大小/N')
+
+k = 1
+for j in range(sys.N):
+    for i in range(sys.N):
+        if sys.NodeConnection[j][i] == 0:
+            continue
+            pass
+        else:
+            sheet1.write(k , 0 , k)
+            sheet1.write(k , 1 , j+1)
+            sheet1.write(k , 2 , i+1)
+            sheet1.write(k , 3 , sys.Npole[j][i])
+            k += 1
+            pass
+        pass
+    pass
+
+
+#节点信息录入
+sheet2.write(0 , 0 , '节点编号')
+sheet2.write(0 , 1 , '节点x坐标')
+sheet2.write(0 , 2 , '节点y坐标')
+sheet2.write(0 , 3 , '节点水平位移u')
+sheet2.write(0 , 4 , '节点垂直位移v')
+sheet2.write(0 , 5 , '节点水平受载Px')
+sheet2.write(0 , 6 , '节点垂直受载Py')
+
+for j in range(sys.N):
+    node = sys.NodeList[j]
+    sheet2.write(j+1 , 0 , j+1)
+    sheet2.write(j+1 , 1 , node.x)
+    sheet2.write(j+1 , 2 , node.y)
+    sheet2.write(j+1 , 3 , node.u)
+    sheet2.write(j+1 , 4 , node.v)
+    sheet2.write(j+1 , 5 , node.Px)
+    sheet2.write(j+1 , 6 , node.Py)
+    pass
+
+
+excel.save('hw.xlsx')
