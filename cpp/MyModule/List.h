@@ -9,7 +9,7 @@ class List{
       
         //空列表构造函数，传入参数n
         void InitList(int n){
-            T*p;
+            T*p = NULL;
             p = new T[n];
         };
     public:
@@ -35,7 +35,7 @@ class List{
         int len()const{return this->length;};
 
         //算符重载[]
-        T operator[](const int k)const{
+        T &operator[](const int k)const{
             int j = k % this->length;
             if(j > 0 || j == 0) return this->p[j];
             else return this->p[j + length];
@@ -57,11 +57,20 @@ class List{
                 this->p[0] = object;
             }
             else{
-                List ls = *this;
-                this->p = new T[this->length + 1];
+                List<T> ls;
+                ls = *this;
                 this->length++;
+                this->p = new T[this->length];
                 for(int i = 0 ; i < length-1 ; i++){this->p[i] = ls[i];};
                 this->p[this->length - 1] = object;
             }
         };
+        //删除函数，在末尾删除
+        void pop(){
+            List<T> ls;
+            ls = *this;
+            this->length--;
+            this->p = new T[this->length];
+            for(int i = 0 ; i < length ; i++){this->p[i] = ls[i];};
+        }
 };
