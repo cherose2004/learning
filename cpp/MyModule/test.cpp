@@ -1,5 +1,5 @@
 #include<iostream>
-#include"List.h"
+#include"MyModule.h"
 using namespace std;
 int main(){
     List<double> a;
@@ -22,4 +22,7 @@ int main(){
     c.del(3);
     cout<<c;
     cout<<c.where(3.3)<<endl;
+    List<double> d(10 , 8.8);
+    cout<<d;
+    cout<<c.inverse();
 }
