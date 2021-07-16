@@ -3,7 +3,8 @@
 
 template<class T>
 class List{
-    private:
+
+    protected:
         int length;
         T*p;
       
@@ -11,6 +12,7 @@ class List{
         void InitList(int n){
             p = new T[n];
         };
+
     public:
       
         //构造函数1
@@ -170,3 +172,70 @@ std::ostream &operator<<(std::ostream &os , const List<T1> &ls){
 }
 
 
+
+
+class Array : public List<double>{
+    public:
+        
+        //构造函数1
+        Array(int length = 0){
+            this->length = length;
+            this->InitList(length);
+        }
+        //构造函数2
+        Array(double*point , int length){
+            this->length = length;
+            this->InitList(length);
+            for(int i = 0 ; i < length ; i++)this->p[i] = point[i];
+        }
+        //构造函数3
+        Array(int length , double num){
+            this->length = length;
+            this->InitList(length);
+            for(int i = 0 ; i < length ; i++)this->p[i] = num;
+        }
+        //析构函数
+        ~Array(){};
+
+        //点积dot
+        double dot(Array a){
+            if(this->length != a.len()){
+                std::cout<<"dimensions error when use dot"<<std::endl;
+                return 0.;
+            }
+            else{
+                double sum = 0.;
+                for(int i = 0 ; i < this->length ; i++){
+                    sum += this->length * a[i];
+                }
+                return sum;
+            }
+        }
+
+
+        //算符重载+ a1+a2
+        Array operator+(const Array &a){
+            if(this->length != a.len()){
+                std::cout<<"dimensions error when use dot"<<std::endl;
+                return *this;
+            }
+            else{
+                Array arr(this->length);
+                for(int i = 0 ; i < arr.len() ; i++)arr[i] = this->p[i] + a[i];
+                return arr;
+            }
+        }
+        template<class T1>
+        //算符重载+ a1+num
+        Array operator+(const T1 &num){
+            Array arr(this->length);
+            for(int i = 0 ; i < arr.len() ; i++)arr[i] = arr[i] + double(num);
+            return arr;
+        }
+        template<class T1>
+        //算符重载+ num+a
+        friend Array operator+(const T1 &num , Array arr);
+};
+
+template<class T1>
+Array operator+(const T1 &num , Array arr){return arr + num;}
