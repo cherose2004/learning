@@ -216,12 +216,12 @@ class Array : public List<double>{
         //算符重载+ a1+a2
         Array operator+(const Array &a){
             if(this->length != a.len()){
-                std::cout<<"dimensions error when use dot"<<std::endl;
+                std::cout<<"dimensions error when use +"<<std::endl;
                 return *this;
             }
             else{
                 Array arr(this->length);
-                for(int i = 0 ; i < arr.len() ; i++)arr[i] = this->p[i] + a[i];
+                for(int i = 0 ; i < arr.len() ; i++) arr[i] = this->p[i] + a[i];
                 return arr;
             }
         }
@@ -229,13 +229,53 @@ class Array : public List<double>{
         //算符重载+ a1+num
         Array operator+(const T1 &num){
             Array arr(this->length);
-            for(int i = 0 ; i < arr.len() ; i++)arr[i] = arr[i] + double(num);
+            for(int i = 0 ; i < arr.len() ; i++) arr[i] = this->p[i] + double(num);
             return arr;
         }
+        //算符重载+ +a
+        Array operator+(){return *this;};
         template<class T1>
         //算符重载+ num+a
         friend Array operator+(const T1 &num , Array arr);
+        template<class T1>
+        //算符重载+= num 
+        void operator+=(const T1 num){*this = *this + num;};
+        //算符重载+= arr
+        void operator+=(const Array arr){*this = *this + arr;};
+
+        //算符重载- a1-a2
+        Array operator-(const Array &a){
+            if(this->length != a.len()){
+                std::cout<<"dimensions error when use -"<<std::endl;
+                return *this;
+            }
+            else{
+                Array arr(this->length);
+                for(int i = 0 ; i < this->length ; i++) arr[i] = this->p[i] - a[i];
+                return arr;
+            }
+        }
+        template<class T1>
+        //算符重载- a-num
+        Array operator-(const T1 num){
+            Array arr(this->length);
+            for(int i = 0 ; i < this->length ; i++) arr[i] = this->p[i] - num;
+            return arr;
+        }
+        //算符重载- -a
+        Array operator-(){
+            Array arr(this->length);
+            for(int i = 0 ; i < this-> length ; i++) arr[i] = - this->p[i];
+            return arr;
+        };
+        template<class T1>
+        //算符重载- num-a
+        friend Array operator-(const T1 &num , Array arr);
+
 };
 
 template<class T1>
 Array operator+(const T1 &num , Array arr){return arr + num;}
+
+template<class T1>
+Array operator-(const T1 &num , Array arr){return - (arr - num);};

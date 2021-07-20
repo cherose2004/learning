@@ -25,9 +25,16 @@ int main(){
     List<double> d(10 , 8.8);
     cout<<d;
     cout<<c.inverse();
+
+    cout<<"bellow is the test for array*****************************"<<endl;
+
     Array e;
     e.append(1.1);
     cout<<e.dot(e)<<endl;
     Array f(10);
     cout<<(f+10);
+    f += 10.;
+    cout<<f<<endl;
+    Array g = 3-f;
+    cout<<g<<endl;
 }
