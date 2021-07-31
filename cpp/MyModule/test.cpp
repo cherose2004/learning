@@ -37,4 +37,6 @@ int main(){
     cout<<f<<endl;
     Array g = 3-f;
     cout<<g<<endl;
+    Array h = g*g;
+    cout<<g<<endl;
 }

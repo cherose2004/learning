@@ -206,7 +206,7 @@ class Array : public List<double>{
             else{
                 double sum = 0.;
                 for(int i = 0 ; i < this->length ; i++){
-                    sum += this->length * a[i];
+                    sum += this->p[i] * a[i];
                 }
                 return sum;
             }
@@ -271,7 +271,38 @@ class Array : public List<double>{
         template<class T1>
         //算符重载- num-a
         friend Array operator-(const T1 &num , Array arr);
+        //算符重载-= a1 -= a2
+        void operator-=(const Array &a){*this = *this - a;};
+        template<class T1>
+        //算符重载-= a1 -= num
+        void operator-=(const T1 &num){*this = *this - num;};
 
+        //算符重载* a1*a2
+        Array operator*(const Array &a){
+            if(this->length != a.len()){
+                std::cout<<"dimensions error when use *"<<std::endl;
+                return *this;
+            }
+            else{
+                Array arr(this->length);
+                for(int i = 0 ; i < this->length ; i++) arr[i] = this->p[i] + a[i];
+                return arr;
+            }
+        }
+        template<class T1>
+        //算符重载* a1*num
+        Array operator*(const T1 &num){
+            Array arr(this->length);
+            for(int i = 0 ; i < this->length ; i++) arr[i] = this->p[i] * num;
+            return arr;
+        }
+        template<class T1>
+        //算符重载* num*a1
+        friend Array operator*(const T1 &num , Array arr);
+        //算符重载 a1 *= a2
+        void operator*=(const Array arr){*this = *this * arr;};
+        template<class T1>
+        void operator*=(const T1 num){*this = *this * num;};
 };
 
 template<class T1>
@@ -279,3 +310,6 @@ Array operator+(const T1 &num , Array arr){return arr + num;}
 
 template<class T1>
 Array operator-(const T1 &num , Array arr){return - (arr - num);};
+
+template<class T1>
+Array operator*(const T1 &num , Array arr){return arr * num;};
