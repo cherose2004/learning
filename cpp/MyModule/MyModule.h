@@ -1,5 +1,10 @@
 #include<iostream>
 #include<iomanip>
+#include<cmath>
+
+
+class Array;
+class Matrix;
 
 template<class T>
 class List{
@@ -213,6 +218,10 @@ class Array : public List<double>{
         }
 
 
+/*
+***********************************************************************************************************************************
+算符重载
+*/
         //算符重载+ a1+a2
         Array operator+(const Array &a){
             if(this->length != a.len()){
@@ -303,6 +312,65 @@ class Array : public List<double>{
         void operator*=(const Array arr){*this = *this * arr;};
         template<class T1>
         void operator*=(const T1 num){*this = *this * num;};
+
+        //算符重载 a1/a2
+        Array operator/(const Array &a2){
+            if(this->length != a2.len()){
+                std::cout<<"dimensions error when use /"<<std::endl;
+                return *this;
+            }
+            else{
+                Array arr(this->length);
+                for(int i = 0 ; i < this->length ; i++) arr[i] = this->p[i] / a2[i];
+                return arr;
+            }
+        }
+        //算符重载 a1/num
+        template<class T1>
+        Array operator/(const T1 &num){
+            Array arr(this->length);
+            for(int i = 0 ; i < this->length ; i++) arr[i] = this->p[i] / num;
+            return arr;
+        }
+        //算符重载 num/a1
+        template<class T1>
+        friend Array operator/(const T1 &num , Array a);
+        //算符重载 a1/=a2
+        void operator/=(const Array &a2){*this = *this/a2;};
+        template<class T1>
+        void operator/=(const T1 &num){*this = *this / num;};
+
+        //算符重载 a1^a2
+        Array operator^(const Array &a){
+            if(this->length != a.len()){
+                std::cout<<"dimensions error when use ^"<<std::endl;
+                return *this;
+            }
+            else{
+                Array arr(this->length);
+                for(int i = 0 ; i < this->length ; i++) arr[i] = pow(this->p[i] , a[i]);
+                return arr;
+            }
+        }
+        template<class T1>
+        //算符重载 a^num
+        Array operator^(const T1 &num){
+            Array arr(this->length);
+            for(int i = 0 ; i < this->length ; i++) arr[i] = pow(this->p[i] , num);
+            return arr;
+        }
+        template<class T1>
+        //算符重载 num^a
+        friend Array operator^(const T1 &num , Array a);
+        //算符重载 num^=a
+        void operator^=(const Array a){*this = *this^a;};
+        template<class T1>
+        //算符重载 a^=num
+        void operator^=(const T1 &num){*this = *this^num;};
+/*
+***********************************************************************************************************************************
+算符重载
+*/
 };
 
 template<class T1>
@@ -313,3 +381,19 @@ Array operator-(const T1 &num , Array arr){return - (arr - num);};
 
 template<class T1>
 Array operator*(const T1 &num , Array arr){return arr * num;};
+
+template<class T1>
+Array operator/(const T1 &num , Array a){
+    Array arr(a.len());
+    for(int i = 0 ; i < a.len() ; i++){
+        arr[i] = num / a[i];
+    }
+    return arr;
+}
+
+template<class T1>
+Array operator^(const T1 &num , Array a){
+    Array arr(a.len());
+    for(int i = 0 ; i < a.len() ; i++) arr[i] = pow(num , a[i]);
+    return arr;
+}

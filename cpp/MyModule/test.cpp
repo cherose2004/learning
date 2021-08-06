@@ -39,4 +39,6 @@ int main(){
     cout<<g<<endl;
     Array h = g*g;
     cout<<g<<endl;
+    cout<<((g+9)^2.5)<<endl;
+    return 0;
 }
