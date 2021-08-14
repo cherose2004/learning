@@ -371,6 +371,45 @@ class Array : public List<double>{
 ***********************************************************************************************************************************
 算符重载
 */
+        //取最大max
+        double max(){
+            double tmp = this->p[0];
+            for(int i = 1 ; i < this->length ; i++){
+                if(tmp > this->p[i]);
+                else tmp = this->p[i];
+            }
+            return tmp;
+        }
+        //取最小min
+        double min(){
+            double tmp = this->p[0];
+            for(int i = 1 ; i < this->length ; i++){
+                if(tmp < this->p[i]);
+                else tmp = this->p[i];
+            }
+            return tmp;
+        }
+        //取和sum
+        double sum(){
+            double sum = 0;
+            for(int i = 0 ; i < this->length ; i++) sum += this->p[i];
+            return sum;
+        }
+        //取均值mean
+        double mean(){
+            return this->sum() / this->length;
+        }
+        //方差var
+        double var(){
+            double aver = this->mean();
+            double sum = 0;
+            double tmp;
+            for(int i = 0 ; i < this->length ; i++){
+                tmp = this->p[i] - aver;
+                sum += tmp*tmp;
+            }
+            return sum / (this->length - 1);
+        }
 };
 
 template<class T1>
