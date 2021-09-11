@@ -67,6 +67,45 @@ for j in range(M):
     ListSupplier.append(item)
     pass
 
+def GetAub(List):
+    n = len(List)
+    Aub = np.zeros(n)
+    for i in range(n):
+        Aub[i] = -List[i].lam
+        pass
+    Aub = np.array([list(Aub)])
+    return Aub
+    pass
+def GetC(List):
+    n = len(List)
+    C = np.zeros(n)
+    for i in range(n):
+        C[i] = List[i].k
+        pass
+    return C
+    pass
+def GetBound(List , weeknum):
+    bound = list()
+    n = len(List)
+    for i in range(n):
+        tmp = (0. , List[i].theta_max[weeknum])
+        bound.append(tmp)
+        pass
+    bound = tuple(bound)
+    return bound
+    pass
+
+#C = GetC(ListSupplier)
+Aub = GetAub(ListSupplier)
+C = Aub.flatten()
+Aub = [list(np.zeros(42)+1.)]
+Listbound = list()
+for i in range(24):
+    Listbound.append( GetBound(ListSupplier , i) )
+    pass
+#bub = np.array([-2.82e4])
+bub = np.array([4.8e4])
+
 Max = np.zeros([42 , 24])
 Sigma = np.zeros([42 , 24])
 Ave = np.zeros([42 , 24])
@@ -76,23 +115,52 @@ for j in range(42):
     Ave = ListSupplier[j].theta_ave
     pass
 
+print("start linprog")
+
+Solution = list()
+for i in range(24):
+    res = op.linprog(C , Aub , bub , bounds = Listbound[i] , method = "highs-ipm")
+    Solution.append(res)
+    pass
+
+matX2 = np.zeros([24 , 42])
+for i in range(24):
+    xx = Solution[i].x
+    matX2[i] = xx
+    pass
+matX2 = np.round(matX2.T)
+
+theta_sigma = np.zeros([42 , 24])
+theta_max = np.zeros([42 , 24])
+for j in range(42):
+    for i in range(24):
+        theta_sigma[j][i] = ListSupplier[j].theta_sigma[i]
+        theta_max[j][i] = ListSupplier[j].theta_max[i]
+        pass
+    pass
+
 Sum = np.zeros(24)
 for j in range(24):
     tmp = 0.
     for i in range(42):
-        tmp += ListSupplier[i].lam * Max[i][j]
+        tmp += ListSupplier[i].lam * matX2[i][j]
         pass
     Sum[j] = tmp
     pass
+Sum
 
-Write = xlwt.Workbook()
-sheet1 = Write.add_sheet("24周供货表")
-sheet2 = Write.add_sheet("每周产能")
-
-for i in range(24):
-    for j in range(42):
-        sheet1.write(j , i , Max[j][i])
+write = xlwt.Workbook()
+sheet1 = write.add_sheet("24周供货表")
+sheet2 = write.add_sheet("theta_floor取值")
+sheet3 = write.add_sheet("theta_ceiling取值")
+sheet4 = write.add_sheet("现在换算后的的产能量")
+for j in range(42):
+    for i in range(24):
+        sheet1.write(j , i , matX2[j][i])
+        sheet2.write(j , i , theta_sigma[j][i])
+        sheet3.write(j , i , theta_max[j][i])
         pass
-    sheet2.write(i , 0 , Sum[i])
     pass
-Write.save("Answer to Q4 improve.xls")
+for i in range(24):
+    sheet4.write(i , 0 , Sum[i])
+write.save("Answer to Q4 improve2.xls")
