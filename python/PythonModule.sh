@@ -1,0 +1,17 @@
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple numpy
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple ipykernel
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple ipython
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple jupyter
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple jupyterlab
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple sympy
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scipy
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple matplotlib
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple seaborn
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple jieba
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple modsimpy
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple wordcloud
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple beautifulsoup4
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple tables
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xlrd
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xlwt
