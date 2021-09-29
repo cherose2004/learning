@@ -67,3 +67,15 @@ grep file linux学习.md | more/cat #前输出作为后之输入
 ```bash
 ln sth link
 ```
+
+## 1.权限
+
+- r只读
+- w编辑
+- x可执行文件
+
+chmod(change mod)改变mod
+
+```bash
+chmod [ugoal][+-=][rwx] filename
+```
