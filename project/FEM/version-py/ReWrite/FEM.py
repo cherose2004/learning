@@ -165,8 +165,17 @@ class Sheet:
         pass
 
     def Setke(self , ke):
+        '''
+        设置局部刚度矩阵
+        '''
         self.ke = ke
         pass
+
+    def SetQ(self , q):
+        '''
+        设置剪流
+        '''
+        self.q = q
     pass
 
 
@@ -186,8 +195,8 @@ class Node:
         '''
         self.x = x
         self.y = y
-        self.setP(Px , Py)
-        self.setuv(u , v)
+        self.SetP(Px , Py)
+        self.SetUV(u , v)
         pass
     
     def SetP(self , Px = NaN , Py = NaN):
@@ -284,20 +293,18 @@ class SystemTruss:
         ke = GetPartK_Truss(E , A , l)
         lam = GetLambda_Truss(lam1 , lam2)
         k = (lam.T).dot(ke).dot(lam)
-        self.PartK[str(j) + ',' + str(i)]
+        self.PartK[str(j) + ',' + str(i)] = k
         info = [E , A , l , lam]
         self.InfoConnection[str(j) + ',' + str(i)] = info
         pass
 
-    def __AddToK(self , j , i , Kji = NaN):
+    def __AddToK(self , j , i):
         '''
         在总体刚度矩阵K中
         加入PartK['j,i']这个矩阵
         传入j和i即可
         '''
-        if np.isnan(Kji) == True:
-            Kji = self.PartK[str(j) + ',' + str(i)]
-            pass
+        Kji = self.PartK[str(j) + ',' + str(i)]
         kjj = Kji[0:2 , 0:2]
         kii = Kji[2:4 , 2:4]
         kji = Kji[0:2 , 2:4]
@@ -337,6 +344,7 @@ class SystemTruss:
         a = np.matrix(a)
         ke = (a.T).dot(a) * G*t/F/4
         sheet = Sheet(i , j , l , m , G , t , F , a , ke)
+        self.SheetList.append(sheet)
         pass
 
     def Generate(self):
@@ -483,29 +491,31 @@ class SystemTruss:
         根据薄板受力理论
         重新更新内力矩阵
         '''
-        for sheet in self.SheetList:
+        for k in range(len(self.SheetList)):
+            sheet = self.SheetList[k]
             i = sheet.i
-            j = sheet.i
+            j = sheet.j
             l = sheet.l
             m = sheet.m
             nodei , nodej , nodel , nodem = self.NodeList[i] , self.NodeList[j] , self.NodeList[l] , self.NodeList[m]
             delta = np.array([
                 nodei.u , nodei.v , nodej.u , nodej.v , nodel.u , nodel.v , nodem.u , nodem.v
             ])
-            q = sheet.G*sheet.t/2/sheet.F * np.array(sheet.a).dot(delta)
+            q = float(sheet.G*sheet.t/2/sheet.F * np.array(sheet.a).dot(delta))
+            self.SheetList[k].SetQ(q)
             Lij = nodei.Distance(nodej)
             Ljl = nodej.Distance(nodel)
-            Llm = nodel.Distace(nodem)
+            Llm = nodel.Distance(nodem)
             Lmi = nodem.Distance(nodei)
             #修正ij
-            self.InternalForce[i][j] += q*Lij/2 * Llm/Lij
-            self.InternalForce[j][i] += -q*Lij/2 * Llm/Lij
+            self.InternalForce[i][j] += q/2 * Llm
+            self.InternalForce[j][i] += -q/2 * Llm
             #修正jl
             self.InternalForce[j][l] += -q*Ljl/2
             self.InternalForce[l][j] += q*Ljl/2
             #修正lm
-            self.InternalForce[l][m] += q*Llm/2 * Lij/Llm
-            self.InternalForce[m][l] += -q*Llm/2 * Lij/Llm
+            self.InternalForce[l][m] += q/2 * Lij
+            self.InternalForce[m][l] += -q/2 * Lij
             #修正mi
             self.InternalForce[m][i] += -q*Lmi/2
             self.InternalForce[i][m] += q*Lmi/2
@@ -514,9 +524,13 @@ class SystemTruss:
         pass
 
     def __GetReport(self):
-        for i in range(40):
+        '''
+        用于书写报告至Report字符串
+        '''
+        for i in range(50):
             self.Report += '*'
             pass
+        self.Report += '\n'
         '''
         self.Report += '\nConnection Matrix :\n' + str(self.NodeConnection)
         for i in range(40):
@@ -527,20 +541,24 @@ class SystemTruss:
             self.Report += '*'
             pass
         '''
+        for sheet in self.SheetList:
+            self.Report += 'q of '+ str(sheet.i+1) + ',' + str(sheet.j+1) + ',' + str(sheet.l+1) + ',' + str(sheet.m+1) + ':\n'
+            self.Report += str(sheet.q) + ' N/m\n\n'
         for k in range(self.N):
-            for i in range(30):
+            for i in range(50):
                 self.Report += '-'
                 pass
             self.Report += '\nNode' + str(k+1) + ' :\n Position :\n'
             self.Report += '(' + str(self.NodeList[k].x) + ',' + str(self.NodeList[k].y) + ')\n'
-            self.Report += 'External Load :\n Horizontal Load Px = ' + str(self.NodeList[k].Px) + 'N\n'
-            self.Report += 'Vertical Load Py = ' + str(self.NodeList[k].Py) + 'N\n'
-            self.Report += 'Displacement :\n Horizontal Displacement u = ' + str(self.NodeList[k].u) + 'm\n'
-            self.Report += 'Vertical Displacement v=' + str(self.NodeList[k].v) + 'm\n'
+            self.Report += 'External Load :\n Horizontal Load Px = ' + str(self.NodeList[k].Px) + ' N\n'
+            self.Report += 'Vertical Load Py = ' + str(self.NodeList[k].Py) + ' N\n'
+            self.Report += 'Displacement :\n Horizontal Displacement u = ' + str(self.NodeList[k].u) + ' m\n'
+            self.Report += 'Vertical Displacement v = ' + str(self.NodeList[k].v) + ' m\n'
             pass
-        for i in range(40):
+        for i in range(50):
             self.Report += '*'
             pass
         pass
+
     
     pass
