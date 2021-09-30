@@ -1,4 +1,4 @@
-# modified by bcynuaa 2021/9/29
+# modified by bcynuaa 2021/9/30
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -127,6 +127,49 @@ def LinearSolve(K , x , y):
     pass
 
 
+class Spring:
+    '''
+    定义一个弹簧约束类别
+    包括：
+    作用点标号：
+    作用方向：'x','y','z'
+    劲度系数K
+    '''
+
+    def __init__(self , ID = 0 , direction = 'x' , k = 1e5):
+        self.ID = ID
+        self.direction = direction
+        self.k = k
+        pass
+    pass
+
+
+class Sheet:
+    '''
+    定义一个板约束
+    包括：
+    i,j,l,m四点标号
+    以及局部刚度矩阵ke
+    '''
+    
+    def __init__(self , i , j , l , m , G , t , F , a , ke = np.zeros([8 , 8])):
+        self.i = i
+        self.j = j
+        self.l = l
+        self.m = m
+        self.G = G
+        self.t = t
+        self.F = F
+        self.a = a
+        self.ke = ke
+        pass
+
+    def Setke(self , ke):
+        self.ke = ke
+        pass
+    pass
+
+
 class Node:
     '''
     定义二维节点类、
@@ -147,7 +190,7 @@ class Node:
         self.setuv(u , v)
         pass
     
-    def setP(self , Px = NaN , Py = NaN):
+    def SetP(self , Px = NaN , Py = NaN):
         '''
         给定力约束
         默认为无约束
@@ -156,7 +199,7 @@ class Node:
         self.Py = Py
         pass
     
-    def setuv(self , u = NaN , v = NaN):
+    def SetUV(self , u = NaN , v = NaN):
         '''
         给定位移约束
         默认为无约束
@@ -165,7 +208,7 @@ class Node:
         self.v = v
         pass
 
-    def set(self , Px = NaN , Py = NaN , u = NaN , v = NaN):
+    def SetBound(self , Px = NaN , Py = NaN , u = NaN , v = NaN):
         '''
         给定广义约束
         默认为无约束
@@ -174,6 +217,15 @@ class Node:
         self.Py = Py
         self.u = u
         self.v = v
+        pass
+
+    def Distance(self , node2):
+        '''
+        返回两节点距离（平面）
+        '''
+        lx = self.x - node2.x
+        ly = self.y - node2.y
+        return np.sqrt(lx**2 + ly**2)
         pass
 
     pass
@@ -190,26 +242,30 @@ class SystemTruss:
         初始化函数，传入一个Node类列表，从而建立系统
         NodeList/NodeList0 : 存放着节点顺序表
         N : 为节点个数
-        NodeConnection : 为连接矩阵，有向，暂时为全0列
+        NodeConnection : 为连接矩阵，有向，暂时为全0
+        InternalForce ： 内力矩阵，有向，暂时全为0
         PartK : 字典类型，用以存放各种名称的局部刚度矩阵
         InfoConnection : 字典类型，用以存放某个连接的连接信息
         K : 组装的整体刚度矩阵，暂时全为0
         SpringList : 弹性元器件列表，存储着弹性元器件存放列表，暂时为空
+        SheetList : 薄板约束设置列表，存储着薄板约束信息的列表，暂时为空
         Report : 生成报告字符串
         '''
         self.NodeList0 = copy.deepcopy(nodelist)
         self.NodeList = copy.deepcopy(nodelist)
         self.N = len(nodelist)
         self.NodeConnection = np.zeros([self.N , self.N])
+        self.InternalForce = np.zeros([self.N , self.N])
         self.PartK = dict()
         self.InfoConnection = dict()
         self.K = np.zeros([2*self.N , 2*self.N])
         self.SpringList = list()
+        self.SheetList = list()
         self.Report = "Reprort : Information of This Truss System\n\n"
         print("Successfully Build The Truss System!")
         pass
 
-    def connect(self , j , i , E = 200e9 , A = 0.01):
+    def Connect(self , j , i , E = 200e9 , A = 0.01):
         '''
         用于连接节点j和i
         更新连接矩阵NodeConnection信息
@@ -218,11 +274,11 @@ class SystemTruss:
         j = j-1
         i = i-1
         self.NodeConnection[j][i] = 1
-        node1 = self.NodeList0[j]
+        node1 = self.NodeList[j]
         node2 = self.NodeList[i]
         x = node2.x - node1.x
         y = node2.y - node1.y
-        l = np.sqrt(x**2 + y**2)
+        l = node1.Distance(node2)
         lam1 = x/l
         lam2 = y/l
         ke = GetPartK_Truss(E , A , l)
@@ -233,13 +289,15 @@ class SystemTruss:
         self.InfoConnection[str(j) + ',' + str(i)] = info
         pass
 
-    def __AddToK(self , j , i):
+    def __AddToK(self , j , i , Kji = NaN):
         '''
         在总体刚度矩阵K中
         加入PartK['j,i']这个矩阵
         传入j和i即可
         '''
-        Kji = self.PartK[str(j) + ',' + str(i)]
+        if np.isnan(Kji) == True:
+            Kji = self.PartK[str(j) + ',' + str(i)]
+            pass
         kjj = Kji[0:2 , 0:2]
         kii = Kji[2:4 , 2:4]
         kji = Kji[0:2 , 2:4]
@@ -250,9 +308,41 @@ class SystemTruss:
         self.K[2*i : 2*(i+1) , 2*j : 2*(j+1)] += kij
         pass
 
-    def generate(self):
+    def SetSpring(self , j , direction = 'x' , k = 1e5):
+        '''
+        设置弹性约束，再j号位置
+        direction方向
+        设置劲度系数为k的约束
+        '''
+        j = j-1
+        spr = Spring(j , direction , k)
+        self.SpringList.append(spr)
+        pass
+
+    def SetSheet(self , i , j , l , m , G = 100e9 , t = 0.01):
+        '''
+        设定i,j,l,m四块板上的约束
+
+        '''
+        i , j , l , m = i-1 , j-1 , l-1 , m-1
+        nodei , nodej , nodel , nodem = self.NodeList[i] , self.NodeList[j] , self.NodeList[l] , self.NodeList[m]
+        xil = nodel.x - nodei.x
+        yil = nodel.y - nodei.y
+        xjm = nodem.x - nodej.x
+        yjm = nodem.y - nodej.y
+        F = np.abs(xil*yjm - xjm*yil)/2
+        a = np.array([
+            -xil , -yil , xjm , yjm , xil , yil , -xjm , -yjm
+        ])
+        a = np.matrix(a)
+        ke = (a.T).dot(a) * G*t/F/4
+        sheet = Sheet(i , j , l , m , G , t , F , a , ke)
+        pass
+
+    def Generate(self):
         '''
         拼装总体刚度矩阵K
+        先拼装桁架结构的部分
         '''
         for j in range(self.N):
             for i in range(self.N):
@@ -263,5 +353,194 @@ class SystemTruss:
                     continue
                 pass
             pass
+        '''
+        再修正因弹性元器件存在
+        而需要修正的约束条件
+        '''
+        for spr in self.SpringList:
+            if spr.direction == 'x':
+                self.NodeList[spr.ID].Px = 0
+                self.NodeList[spr.ID].u = NaN
+                self.K[2*spr.ID][2*spr.ID] += spr.k
+                pass
+            elif spr.direction == 'y':
+                self.NodeList[spr.ID].Py = 0
+                self.NodeList[spr.ID].v = NaN
+                self.K[2*spr.ID+1][2*spr.ID+1] += spr.k
+                pass
+            else:
+                print("Error of Spring Bound at Node : " + str(spr.ID))
+                pass
+            pass
+        '''
+        需要添加薄板约束
+        更新总体刚度矩阵
+        '''
+        for sheet in self.SheetList:
+            i = sheet.i
+            j = sheet.j
+            l = sheet.l
+            m = sheet.m
+            ke = sheet.ke
+            ls = [i , j , l , m]
+            for jj in range(4):
+                for ii in range(4):
+                    self.K[2*ls[jj] : 2*(ls[jj]+1) , 2*ls[ii] : 2*(ls[ii]+1)] += ke[2*jj : 2*(jj+1) , 2*ii : 2*(ii+1)]
+                    pass
+                pass
+            pass
         print("Successfully Generate Matrix K!")
         pass
+
+    def SetBound(self , j , Px = NaN , Py = NaN , u = NaN , v = NaN):
+        '''
+        设定全部约束
+        '''
+        j = j-1
+        self.NodeList[j].SetBound(Px , Py , u , v)
+        pass
+
+    def SetP(self , j , Px = NaN , Py = NaN):
+        '''
+        设定力约束
+        '''
+        j = j-1
+        self.NodeList[j].SetP(Px , Py)
+        pass
+
+    def SetUV(self , j , u = NaN , v = NaN):
+        '''
+        设定位移约束
+        '''
+        j = j-1
+        self.NodeList[j].SetUV(u , v)
+        pass
+
+    def Solve(self):
+        '''
+        用于求解整个桁架结构
+        使用分块矩阵求解
+        更新信息至NodeList中的每一个节点
+        生成内力矩阵InternalForce
+        '''
+        x0 = np.zeros(2*self.N)
+        y0 = np.zeros(2*self.N)
+        for j in range(self.N):
+            x0[2*j] = self.NodeList[j].u
+            x0[2*j+1] = self.NodeList[j].v
+            y0[2*j] = self.NodeList[j].Px
+            y0[2*j+1] = self.NodeList[j].Py
+            pass
+        xn , yn = LinearSolve(self.K , x0 , y0)
+        '''
+        将结果写入NodeList中的每个节点内
+        '''
+        for j in range(self.N):
+            self.NodeList[j].u = xn[2*j]
+            self.NodeList[j].v = xn[2*j+1]
+            self.NodeList[j].Px = yn[2*j]
+            self.NodeList[j].Py = yn[2*j+1]
+            pass
+        '''
+        对弹性元器件部分进行修正
+        '''
+        for spr in self.SpringList:
+            if spr.direction == 'x':
+                self.NodeList[spr.ID].Px = -spr.k * self.NodeList[spr.ID].u
+                pass
+            elif spr.direction == 'y':
+                self.NodeList[spr.ID].Py = -spr.k * self.NodeList[spr.ID].v
+                pass
+            else:
+                print("Error of Spring Bound at Node : " + str(spr.ID))
+                pass
+            pass
+        '''
+        更新InternalForce内力矩阵
+        '''
+        for j in range(self.N):
+            for i in range(self.N):
+                if self.NodeConnection[j][i] != 1:
+                    continue
+                else:
+                    info = self.InfoConnection[str(j) + ',' + str(i)]
+                    E = info[0]
+                    A = info[1]
+                    l = info[2]
+                    lam = info[3]
+                    nodej = self.NodeList[j]
+                    nodei = self.NodeList[i]
+                    delta = np.array([
+                        nodej.u , nodej.v , nodei.u , nodei.v
+                    ])
+                    S = GetPartK_Truss(E , A , l).dot(lam).dot(delta)
+                    self.InternalForce[j][i] = S[1]
+                    self.InternalForce[i][j] = S[1]
+                    pass
+                pass
+            pass
+        '''
+        根据薄板受力理论
+        重新更新内力矩阵
+        '''
+        for sheet in self.SheetList:
+            i = sheet.i
+            j = sheet.i
+            l = sheet.l
+            m = sheet.m
+            nodei , nodej , nodel , nodem = self.NodeList[i] , self.NodeList[j] , self.NodeList[l] , self.NodeList[m]
+            delta = np.array([
+                nodei.u , nodei.v , nodej.u , nodej.v , nodel.u , nodel.v , nodem.u , nodem.v
+            ])
+            q = sheet.G*sheet.t/2/sheet.F * np.array(sheet.a).dot(delta)
+            Lij = nodei.Distance(nodej)
+            Ljl = nodej.Distance(nodel)
+            Llm = nodel.Distace(nodem)
+            Lmi = nodem.Distance(nodei)
+            #修正ij
+            self.InternalForce[i][j] += q*Lij/2 * Llm/Lij
+            self.InternalForce[j][i] += -q*Lij/2 * Llm/Lij
+            #修正jl
+            self.InternalForce[j][l] += -q*Ljl/2
+            self.InternalForce[l][j] += q*Ljl/2
+            #修正lm
+            self.InternalForce[l][m] += q*Llm/2 * Lij/Llm
+            self.InternalForce[m][l] += -q*Llm/2 * Lij/Llm
+            #修正mi
+            self.InternalForce[m][i] += -q*Lmi/2
+            self.InternalForce[i][m] += q*Lmi/2
+            pass
+        self.__GetReport()
+        pass
+
+    def __GetReport(self):
+        for i in range(40):
+            self.Report += '*'
+            pass
+        '''
+        self.Report += '\nConnection Matrix :\n' + str(self.NodeConnection)
+        for i in range(40):
+            self.Report += '*'
+            pass
+        self.Report += '\nInternal Force Matrix :\n' + str(self.InternalForce)
+        for i in range(40):
+            self.Report += '*'
+            pass
+        '''
+        for k in range(self.N):
+            for i in range(30):
+                self.Report += '-'
+                pass
+            self.Report += '\nNode' + str(k+1) + ' :\n Position :\n'
+            self.Report += '(' + str(self.NodeList[k].x) + ',' + str(self.NodeList[k].y) + ')\n'
+            self.Report += 'External Load :\n Horizontal Load Px = ' + str(self.NodeList[k].Px) + 'N\n'
+            self.Report += 'Vertical Load Py = ' + str(self.NodeList[k].Py) + 'N\n'
+            self.Report += 'Displacement :\n Horizontal Displacement u = ' + str(self.NodeList[k].u) + 'm\n'
+            self.Report += 'Vertical Displacement v=' + str(self.NodeList[k].v) + 'm\n'
+            pass
+        for i in range(40):
+            self.Report += '*'
+            pass
+        pass
+    
+    pass
