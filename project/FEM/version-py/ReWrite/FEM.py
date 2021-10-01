@@ -482,7 +482,7 @@ class SystemTruss:
                         nodej.u , nodej.v , nodei.u , nodei.v
                     ])
                     S = GetPartK_Truss(E , A , l).dot(lam).dot(delta)
-                    self.InternalForce[j][i] = S[1]
+                    self.InternalForce[j][i] = -S[0]
                     self.InternalForce[i][j] = S[1]
                     pass
                 pass
