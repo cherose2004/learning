@@ -527,17 +527,17 @@ class SystemTruss:
         '''
         用于书写报告至Report字符串
         '''
-        for i in range(50):
+        for i in range(60):
             self.Report += '*'
             pass
         self.Report += '\n'
         '''
         self.Report += '\nConnection Matrix :\n' + str(self.NodeConnection)
-        for i in range(40):
+        for i in range(60):
             self.Report += '*'
             pass
         self.Report += '\nInternal Force Matrix :\n' + str(self.InternalForce)
-        for i in range(40):
+        for i in range(60):
             self.Report += '*'
             pass
         '''
@@ -545,17 +545,17 @@ class SystemTruss:
             self.Report += 'q of '+ str(sheet.i+1) + ',' + str(sheet.j+1) + ',' + str(sheet.l+1) + ',' + str(sheet.m+1) + ':\n'
             self.Report += str(sheet.q) + ' N/m\n\n'
         for k in range(self.N):
-            for i in range(50):
+            for i in range(60):
                 self.Report += '-'
                 pass
             self.Report += '\nNode' + str(k+1) + ' :\n Position :\n'
             self.Report += '(' + str(self.NodeList[k].x) + ',' + str(self.NodeList[k].y) + ')\n'
-            self.Report += 'External Load :\n Horizontal Load Px = ' + str(self.NodeList[k].Px) + ' N\n'
+            self.Report += 'External Load :\nHorizontal Load Px = ' + str(self.NodeList[k].Px) + ' N\n'
             self.Report += 'Vertical Load Py = ' + str(self.NodeList[k].Py) + ' N\n'
-            self.Report += 'Displacement :\n Horizontal Displacement u = ' + str(self.NodeList[k].u) + ' m\n'
+            self.Report += 'Displacement :\nHorizontal Displacement u = ' + str(self.NodeList[k].u) + ' m\n'
             self.Report += 'Vertical Displacement v = ' + str(self.NodeList[k].v) + ' m\n'
             pass
-        for i in range(50):
+        for i in range(60):
             self.Report += '*'
             pass
         pass
