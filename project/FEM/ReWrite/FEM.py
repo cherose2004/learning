@@ -2,7 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import xlrd
+#import xlrd
 import xlwt
 import copy
 
@@ -520,7 +520,9 @@ class SystemTruss:
             self.InternalForce[m][i] += -q*Lmi/2
             self.InternalForce[i][m] += q*Lmi/2
             pass
+        print("Successfully Solve the Truss System!")
         self.__GetReport()
+        #self.__GetFigure()
         pass
 
     def __GetReport(self):
@@ -560,5 +562,253 @@ class SystemTruss:
             pass
         pass
 
-    
+    def __GetFigure(self , size = 40 , ftsize = NaN , sizex = NaN , sizey = NaN , PointSize = NaN , LineSize = NaN):
+        '''
+        绘制图片
+        有各种参数可选择
+        '''
+        if np.isnan(sizex) == True:
+            sizex = size
+            pass
+        if np.isnan(sizey) == True:
+            sizey = size
+            pass
+        if np.isnan(PointSize) == True:
+            PointSize = 40*size
+            pass
+        if np.isnan(ftsize) == True:
+            ftsize = 1.3*size
+            pass
+        if np.isnan(LineSize) == True:
+            LineSize = size/3
+        '''开始绘图'''
+        pic = plt.figure(facecolor = 'white' , figsize = (sizex , sizey))
+        '''
+        先绘制各个节点
+        '''
+        for k in range(self.N):
+            node = self.NodeList[k]
+            x = node.x
+            y = node.y
+            plt.scatter(x , y , s = PointSize , alpha = 0.7 , color = 'r')
+            plt.text(x , y , str(k+1) , fontsize = 3*ftsize , color = 'gray' , alpha = 0.8)
+            plt.text(x , y , 'u = '+str(node.u)+'\nv = '+str(node.v) , fontsize = ftsize , color = 'b')
+            pass
+        '''
+        再绘制连接以及
+        各端轴力
+        '''
+        for j in range(self.N):
+            for i in range(self.N):
+                if self.NodeConnection[j][i] != 1:
+                    continue
+                else:
+                    nodej = self.NodeList[j]
+                    nodei = self.NodeList[i]
+                    plt.plot([nodej.x , nodei.x] , [nodej.y , nodei.y] , linewidth = LineSize , alpha = 0.7 , color = 'g')
+                    x1 = 0.8*nodej.x + 0.2*nodei.x
+                    x2 = 0.2*nodej.x + 0.8*nodei.x
+                    y1 = 0.8*nodej.y + 0.2*nodei.y
+                    y2 = 0.2*nodej.y + 0.8*nodei.y
+                    plt.text(x1 , y1 , self.InternalForce[j][i] , fontsize = ftsize , color = 'k')
+                    plt.text(x2 , y2 , self.InternalForce[j][i] , fontsize = ftsize , color = 'k')
+                    pass
+                pass
+            pass
+        '''
+        再绘制薄板约束件
+        '''
+        for sheet in self.SheetList:
+            nodei = self.NodeList[sheet.i]
+            nodej = self.NodeList[sheet.j]
+            nodel = self.NodeList[sheet.l]
+            nodem = self.NodeList[sheet.m]
+            fillx = np.array([nodei.x , nodej.x , nodel.x , nodem.x])
+            filly = np.array([nodei.y , nodej.y , nodel.y , nodem.y])
+            plt.fill(fillx , filly , facecolor = 'y' , alpha = 0.3)
+            plt.text(np.mean(fillx) , np.mean(filly) , 'q = ' + str(sheet.q) + '\n' + str(sheet.j+1) + '->' + str(sheet.i+1) , fontsize = ftsize , color = 'k')
+            pass
+        plt.axis('off')
+        plt.title("Truss System" , fontsize = 1.5*ftsize)
+        plt.show()
+        self.pic = pic
+        pass
+
+    def SetPrecison(self , dec = 6):
+        '''
+        更新：
+        self.InternalForce内力矩阵，保留dec精度
+        各节点信息，保留dec
+        重写Report
+        '''
+        self.InternalForce = np.around(self.InternalForce , decimals = dec)
+        for j in range(self.N):
+            self.NodeList[j].Px = np.around(self.NodeList[j].Px , decimals = dec)
+            self.NodeList[j].Py = np.around(self.NodeList[j].Py , decimals = dec)
+            self.NodeList[j].u = np.around(self.NodeList[j].u , decimals = dec)
+            self.NodeList[j].v = np.around(self.NodeList[j].v , decimals = dec)
+            pass
+        for k in range( len(self.SheetList) ):
+            self.SheetList[k].q = np.around(self.SheetList[k].q , decimals = dec)
+            pass
+        self.Report = "Reprort : Information of This Truss System\n\n"
+        self.__GetReport()
+        #self.__GetFigure()
+        pass
+
+    def ExportReport(self , filename = 'Report_of_Truss_System.txt'):
+        '''
+        导出self.Report计算报告
+        至指定filename 的 txt文本文件中
+        '''
+        f = open(filename , mode = 'w' , encoding = 'utf-8')
+        f.write(self.Report)
+        f.close()
+        print("Successfully Write to File " + filename + ' !')
+        pass
+
+    def ExportExcel(self , filename = 'Excel_of_Truss_System.xls'):
+        '''
+        导出系统整体信息至filename的
+        excel表格中
+        有多张表格用以说明桁架类信息
+        '''
+        workbook = xlwt.Workbook(encoding = 'utf-8')
+        '''
+        1.先写入各个节点的信息
+        '''
+        sheet1 = workbook.add_sheet('Node 节点信息')
+        sheet1.write(0 , 0 , '节点编号ID')
+        sheet1.write(0 , 1 , '横向x坐标')
+        sheet1.write(0 , 2 , '纵向y坐标')
+        sheet1.write(0 , 3 , '横向外载Px')
+        sheet1.write(0 , 4 , '纵向外载Py')
+        sheet1.write(0 , 5 , '横向位移u')
+        sheet1.write(0 , 6 , '纵向位移v')
+        for j in range(self.N):
+            sheet1.write(j+1 , 0 , j+1)
+            sheet1.write(j+1 , 1 , self.NodeList[j].x)
+            sheet1.write(j+1 , 2 , self.NodeList[j].y)
+            sheet1.write(j+1 , 3 , self.NodeList[j].Px)
+            sheet1.write(j+1 , 4 , self.NodeList[j].Py)
+            sheet1.write(j+1 , 5 , self.NodeList[j].u)
+            sheet1.write(j+1 , 6 , self.NodeList[j].v)
+            pass
+        '''
+        2.再写入连接信息
+        '''
+        sheet2 = workbook.add_sheet('连接以及内力信息')
+        sheet2.write(0 , 0 , '连接编号')
+        sheet2.write(0 , 1 , '起点编号')
+        sheet2.write(0 , 2 , '终点编号')
+        sheet2.write(0 , 3 , '弹性模量')
+        sheet2.write(0 , 4 , '横截面积')
+        sheet2.write(0 , 5 , '桁架长度')
+        sheet2.write(0 , 6 , '桁架内力')
+        k = 1
+        for j in range(self.N):
+            for i in range(self.N):
+                if self.NodeConnection[j][i] != 1:
+                    continue
+                else:
+                    sheet2.write(k , 0 , (k+1)/2)
+                    sheet2.write(k , 1 , j+1)
+                    sheet2.write(k , 2 , i+1)
+                    sheet2.write(k , 3 , self.InfoConnection[str(j) + ',' +str(i)][0])
+                    sheet2.write(k , 4 , self.InfoConnection[str(j) + ',' +str(i)][1])
+                    sheet2.write(k , 5 , self.InfoConnection[str(j) + ',' +str(i)][2])
+                    sheet2.write(k , 6 , self.InternalForce[j][i])
+                    '''写入另一侧信息'''
+                    k += 1
+                    sheet2.write(k , 1 , i+1)
+                    sheet2.write(k , 2 , j+1)
+                    sheet2.write(k , 3 , self.InfoConnection[str(j) + ',' +str(i)][0])
+                    sheet2.write(k , 4 , self.InfoConnection[str(j) + ',' +str(i)][1])
+                    sheet2.write(k , 5 , self.InfoConnection[str(j) + ',' +str(i)][2])
+                    sheet2.write(k , 6 , self.InternalForce[i][j])
+                    k += 1
+                    pass
+                pass
+            pass
+        '''
+        3.写入剪流信息
+        '''
+        if len(self.SheetList) == 0:
+            pass
+        else:
+            sheet3 = workbook.add_sheet('剪流信息')
+            sheet3.write(0 , 0 , '剪流q编号')
+            sheet3.write(0 , 1 , '剪流节点1')
+            sheet3.write(0 , 2 , '剪流节点2')
+            sheet3.write(0 , 3 , '剪流节点3')
+            sheet3.write(0 , 4 , '剪流节点4')
+            sheet3.write(0 , 5 , '受剪板剪切模量G')
+            sheet3.write(0 , 6 , '受剪板厚t')
+            sheet3.write(0 , 7 , '受剪板面积')
+            sheet3.write(0 , 8 , '剪流大小')
+            for k in range( len(self.SheetList) ):
+                sheet3.write(k+1 , 0 , k+1)
+                sheet3.write(k+1 , 1 , self.SheetList[k].i)
+                sheet3.write(k+1 , 2 , self.SheetList[k].j)
+                sheet3.write(k+1 , 3 , self.SheetList[k].l)
+                sheet3.write(k+1 , 4 , self.SheetList[k].m)
+                sheet3.write(k+1 , 5 , self.SheetList[k].G)
+                sheet3.write(k+1 , 6 , self.SheetList[k].t)
+                sheet3.write(k+1 , 7 , self.SheetList[k].F)
+                sheet3.write(k+1 , 8 , self.SheetList[k].q)
+                pass
+            pass
+        '''
+        4.写入整体刚度矩阵
+        '''
+        sheet4 = workbook.add_sheet('整体刚度矩阵')
+        for j in range(2*self.N):
+            for i in range(2*self.N):
+                sheet4.write(j , i , self.K[j][i])
+                pass
+            pass
+        '''
+        5.写入内力矩阵
+        '''
+        sheet5 = workbook.add_sheet('内力矩阵')
+        for j in range(self.N):
+            for i in range(self.N):
+                sheet5.write(j , i , self.InternalForce[j][i])
+                pass
+            pass
+        '''
+        6.写入弹性约束
+        '''
+        if len(self.SpringList) == 0:
+            pass
+        else:
+            sheet6 = workbook.add_sheet()
+            sheet6.write(0 , 0 , '弹性约束编号')
+            sheet6.write(0 , 1 , '约束作用点')
+            sheet6.write(0 , 2 , '约束方向')
+            sheet6.write(0 , 3 , '劲度系数k')
+            for k in range( len(self.SpringList) ):
+                sheet6.write(k+1 , 0 , k+1)
+                sheet6.write(k+1 , 1 , self.SpringList[k].ID)
+                sheet6.write(k+1 , 2 , self.SpringList[k].direction)
+                sheet6.write(k+1 , 3 , self.SpringList[k].k)
+                pass
+            pass
+        '''
+        保存至filename
+        '''
+        workbook.save(filename)
+        print("Successfully Export Truss System to " + filename + '!')
+        pass
+
+    def ExportFigure(self , filename = 'Figure_of_Truss_System.png' ,  size = 40 , ftsize = NaN , sizex = NaN , sizey = NaN , PointSize = NaN , LineSize = NaN):
+        '''
+        写入filename图片文件
+        有诸多参数可选择
+        '''
+        self.__GetFigure(size , ftsize , sizex , sizey , PointSize , LineSize)
+        self.pic.savefig(filename)
+        print("Successfully Save Figure to " + filename + '!')
+        pass
+
     pass
