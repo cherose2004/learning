@@ -29,7 +29,8 @@ int main(){
     cout<<"bellow is the test for array******************************************************************"<<endl;
 
     Array e;
-    e.append(1.1);
+    e.append(1.);
+    e.append(2.);
     cout<<e.dot(e)<<endl;
     Array f(10);
     cout<<(f+10);

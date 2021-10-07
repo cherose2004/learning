@@ -447,7 +447,7 @@ class Matrix : public List<Array>{
     public:
 
         //初始化函数1
-        Matrix(int m , int n){
+        Matrix(int m = 0 , int n = 0){
             this->length = m;
             this->InitList(m);
             for(int i  = 0 ; i < m ; i++){
@@ -500,4 +500,16 @@ class Matrix : public List<Array>{
 
         //~析构函数
         ~Matrix(){};
+
+        //Transpose转置函数
+        Matrix T(){
+            int m = this->length;
+            int n = this->p[0].len();
+            Matrix mat(n , m);
+            for(int j = 0 ; j < m ; j++){
+                for(int i = 0 ; i < n ; i++)
+                mat[i][j] = this->p[j][i];
+            }
+            return mat;
+        }
 };
