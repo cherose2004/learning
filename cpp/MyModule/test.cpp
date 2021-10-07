@@ -1,5 +1,5 @@
-#include<iostream>
-#include"MyModule.h"
+#include <iostream>
+#include "MyModule.h"
 using namespace std;
 int main(){
     List<double> a;
@@ -26,7 +26,7 @@ int main(){
     cout<<d;
     cout<<c.inverse();
 
-    cout<<"bellow is the test for array*****************************"<<endl;
+    cout<<"bellow is the test for array******************************************************************"<<endl;
 
     Array e;
     e.append(1.1);
@@ -40,5 +40,19 @@ int main(){
     Array h = g*g;
     cout<<g<<endl;
     cout<<((g+9)^2.5)<<endl;
+
+    cout<<"below is the test for matrix*****************************************************************"<<endl;
+
+    Matrix k(4,10,3);
+    cout<<k<<endl;
+    cout<<k[0][-1]<<endl;
+    double L[2][4] = {
+        {1,2,3,4},
+        {5,3,6,7}
+    };
+    Matrix M((double*)L , 2 , 4);
+    cout<<M<<endl;
+    Matrix NN(M);
+    cout<<NN<<endl;
     return 0;
 }
