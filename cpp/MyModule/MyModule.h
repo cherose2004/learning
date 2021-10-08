@@ -171,13 +171,15 @@ template<class T1>
 std::ostream &operator<<(std::ostream &os , const List<T1> &ls){
     int n = ls.len();
     os<<"\n";
-    for(int i = 0 ; i < n ; i++)os<<" "<<ls[i]<<" ";
+    for(int i = 0 ; i < n ; i++) os<<ls[i]<<" ";
     os<<"\n";
     return os;
 }
 
 
-
+/*
+Array数组类型定义****************************************************************************************************
+*/
 
 class Array : public List<double>{
     public:
@@ -219,7 +221,7 @@ class Array : public List<double>{
 
 
 /*
-***********************************************************************************************************************************
+***************************************************************************************************************
 算符重载
 */
         //算符重载+ a1+a2
@@ -436,3 +438,78 @@ Array operator^(const T1 &num , Array a){
     for(int i = 0 ; i < a.len() ; i++) arr[i] = pow(num , a[i]);
     return arr;
 }
+
+/*
+开始矩阵类型的定义******************************************************************************************************
+*/
+
+class Matrix : public List<Array>{
+    public:
+
+        //初始化函数1
+        Matrix(int m = 0 , int n = 0){
+            this->length = m;
+            this->InitList(m);
+            for(int i  = 0 ; i < m ; i++){
+                Array arr(n);
+                this->p[i] = arr;
+            }
+        }
+        
+        //初始化函数2
+        Matrix(int m , int n , double num){
+            this->length = m;
+            this->InitList(m);
+            for(int i  = 0 ; i < m ; i++){
+                Array arr(n , num);
+                this->p[i] = arr;
+            }
+        }
+
+        //初始化函数3,对于传统的参数需要指定(T*)arr
+        template<class T>
+        Matrix(T* a , int m , int n){
+            this->length = m;
+            this->InitList(m);
+            for(int i = 0 ; i < m ; i++){
+                Array arr(n);
+                this->p[i] = arr;
+            }
+            for(int j = 0 ; j < m ; j++){
+                for(int i = 0 ; i < n ; i++){
+                    this->p[j][i] = *(a+j*n+i);
+                }
+            }
+        }
+
+        //初始化函数4，需要(*array)[N]这样给定
+        template<class T>
+        Matrix(T** a , int m , int n){
+            this->length = m;
+            this->InitList(m);
+            for(int i = 0 ; i < m ; i++){
+                Array arr(n);
+                this->p[i] = arr;
+            }
+            for(int j = 0 ; j < m ; j++){
+                for(int i = 0 ; i < n ; i++){
+                    this->p[j][i] = *((a+i)+j*n);
+                }
+            }
+        }
+
+        //~析构函数
+        ~Matrix(){};
+
+        //Transpose转置函数
+        Matrix T(){
+            int m = this->length;
+            int n = this->p[0].len();
+            Matrix mat(n , m);
+            for(int j = 0 ; j < m ; j++){
+                for(int i = 0 ; i < n ; i++)
+                mat[i][j] = this->p[j][i];
+            }
+            return mat;
+        }
+};
