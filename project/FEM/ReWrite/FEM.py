@@ -611,7 +611,7 @@ class SystemTruss:
                     y1 = 0.8*nodej.y + 0.2*nodei.y
                     y2 = 0.2*nodej.y + 0.8*nodei.y
                     plt.text(x1 , y1 , self.InternalForce[j][i] , fontsize = ftsize , color = 'k')
-                    plt.text(x2 , y2 , self.InternalForce[j][i] , fontsize = ftsize , color = 'k')
+                    plt.text(x2 , y2 , self.InternalForce[i][j] , fontsize = ftsize , color = 'k')
                     pass
                 pass
             pass
