@@ -626,7 +626,7 @@ class SystemTruss:
             fillx = np.array([nodei.x , nodej.x , nodel.x , nodem.x])
             filly = np.array([nodei.y , nodej.y , nodel.y , nodem.y])
             plt.fill(fillx , filly , facecolor = 'y' , alpha = 0.3)
-            plt.text(np.mean(fillx) , np.mean(filly) , 'q = ' + str(sheet.q) + '\n' + str(sheet.j+1) + '->' + str(sheet.i+1) , fontsize = ftsize , color = 'k')
+            plt.text(np.mean(fillx) , np.mean(filly) , 'q = ' + str(sheet.q) + '\n' + str(sheet.i+1) + '->' + str(sheet.j+1) , fontsize = ftsize , color = 'k')
             pass
         plt.axis('off')
         plt.title("Truss System" , fontsize = 1.5*ftsize)
