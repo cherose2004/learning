@@ -14,3 +14,5 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple wordcloud
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple beautifulsoup4
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xlrd
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xlwt
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyqt5
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyqt5-tools
