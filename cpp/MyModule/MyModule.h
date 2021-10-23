@@ -501,10 +501,20 @@ class Matrix : public List<Array>{
         //~析构函数
         ~Matrix(){};
 
+        //返回矩阵行数
+        int row(){
+            return this->length;
+        }
+
+        //返回矩阵列数
+        int col(){
+            return this->p[0].len();
+        }
+
         //Transpose转置函数
         Matrix T(){
-            int m = this->length;
-            int n = this->p[0].len();
+            int m = this->row();
+            int n = this->col();
             Matrix mat(n , m);
             for(int j = 0 ; j < m ; j++){
                 for(int i = 0 ; i < n ; i++)

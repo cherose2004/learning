@@ -47,13 +47,15 @@ int main(){
     Matrix k(4,10,3);
     cout<<k<<endl;
     cout<<k[0][-1]<<endl;
-    double L[2][4] = {
+    double L[3][4] = {
         {1,2,3,4},
-        {5,3,6,7}
+        {5,3,6,7},
+        {8,9,8,10}
     };
-    Matrix M((double*)L , 2 , 4);
+    Matrix M((double*)L , 3 , 4);
     cout<<M<<endl;
     Matrix NN(M);
     cout<<NN<<endl;
+    cout<<NN.T()<<endl;
     return 0;
 }
